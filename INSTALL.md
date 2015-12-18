@@ -3,13 +3,14 @@ INSTALL
 
 You need a GNU/Linux system to run this program.
 
-In Ubuntu, run the following commands
+In Ubuntu, run the following commands.
 
----
+
+```
 sudo apt-get install djvulibre-bin  libdjvulibre21  libevdocument1 libevview1 libtiff-tools mupdf mupdf-tools pdftk poppler-utils 
 
 sudo pip install clint requests wikitools poster
----
+```
 
 Then, you have to install and setup gdcmdtools, commandline utilities to work with Google drive.
 
