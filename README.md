@@ -49,7 +49,18 @@ This will give text files as 'text_for_page_00001.txt' etc equvalent to the no o
 mediawiki_uploader.py
 =====================
 
+run as
+
+```
+python mediawiki_uploader.py
+```
+
 This uploads the text files provided by do_ocr.py to the wikisource details you provided in config.ini
+
+For testing you can keep only few files provided by do_ocr.py (example from text_for_page_00001.txt to text_for_page_00005.txt)
+Move all other text files to another folder.
+Once you are satisfied, you can place all the files in the current folder.
+
 
 For this, the PDF or DJVU file should be already splitted into individual pages in wiki souce.
 
