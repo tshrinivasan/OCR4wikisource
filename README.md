@@ -28,18 +28,19 @@ do_ocr.py
 
 Run this as
 
+---
 python do_ocr.py
-
+---
 
 This will do the following things.
 
-# download the file
-# if it is DJVU, convert to PDF
-# split it into individual files based on column no
-# create a folder in your Google Drive
-# upload the PDF files to Google Drive
-# Download the OCRed text
-# split, merge the text files properly to fit as the PDF files
+* download the file
+* if it is DJVU, convert to PDF
+* split it into individual files based on column no
+* create a folder in your Google Drive
+* upload the PDF files to Google Drive
+* Download the OCRed text
+* split, merge the text files properly to fit as the PDF files
 
 
 This will give text files as 'text_for_page_00001.txt' etc equvalent to the no of pages in the PDF file.
@@ -52,7 +53,9 @@ This uploads the text files provided by do_ocr.py to the wikisource details you 
 
 For this, the PDF or DJVU file should be already splitted into individual pages in wiki souce.
 
+---
 Example :  "https://" + wikisource_language_code + "wikisource.org/wiki/Page:" + filename/pageno
+---
 
 Contact your wikisource team for splitting the files into individual pages.
 
@@ -63,9 +66,9 @@ Contact your wikisource team for splitting the files into individual pages.
 ToDo:
 ====
 
-# This program uplads single page PDF to google drive. Google accepts 10 page PDF files. Create 10 page pdf files, upload, split the text files for faster operations.
-# Give a web interface using Django or Flask.
-# Port to other Operating Systems like Windows.
+* This program uplads single page PDF to google drive. Google accepts 10 page PDF files. Create 10 page pdf files, upload, split the text files for faster operations.
+* Give a web interface using Django or Flask.
+* Port to other Operating Systems like Windows.
 
 
 
