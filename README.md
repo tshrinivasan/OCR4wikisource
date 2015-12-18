@@ -28,9 +28,9 @@ do_ocr.py
 
 Run this as
 
----
+```
 python do_ocr.py
----
+```
 
 This will do the following things.
 
@@ -53,9 +53,9 @@ This uploads the text files provided by do_ocr.py to the wikisource details you 
 
 For this, the PDF or DJVU file should be already splitted into individual pages in wiki souce.
 
----
+```
 Example :  "https://" + wikisource_language_code + "wikisource.org/wiki/Page:" + filename/pageno
----
+```
 
 Contact your wikisource team for splitting the files into individual pages.
 

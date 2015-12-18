@@ -21,10 +21,10 @@ install gdcmdtools from https://github.com/tienfuc/gdcmdtools and complete the s
 
 Download the zip and extract.
 
----
+```
 cd gdcmdtools
 sudo python setup.py install
----
+```
 
 
 # API Setup
