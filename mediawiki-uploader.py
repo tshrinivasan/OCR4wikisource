@@ -2,7 +2,6 @@
 
 import wikitools
 import poster
-import pyexiv2
 import os
 import shutil
 import sys
