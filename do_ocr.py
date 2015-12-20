@@ -19,6 +19,7 @@ config.read("config.ini")
 ts = time.time()
 timestamp  = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
 
+#Read the config file
 
 url = config.get('settings','file_url')
 columns = config.get('settings','columns')
@@ -37,6 +38,7 @@ temp_folder = 'temp-'+ timestamp
 print "\n\nDownloading the file " + filename + "\n\n"
 
 
+#Download the file
 
 r = requests.get(url, stream=True)
 with open(filename, 'wb') as f:
@@ -46,6 +48,9 @@ with open(filename, 'wb') as f:
                         f.write(chunk)
                         f.flush()
 
+
+
+# Convert djvu to PDF
 
 if filetype.lower() == "djvu" :
         print "Found a djvu file. Converting to PDF file. " + "\n\n"
@@ -58,6 +63,8 @@ if filetype.lower() == "djvu" :
 
 
 if filetype.lower() == "pdf":
+
+	# split the PDF files vertically based on the column numbers
 
         print "Aligining the Pages of PDF file. \n" 
         command = "mutool poster -x " + str(columns)  + " " +  filename + "  currentfile.pdf"
@@ -101,6 +108,8 @@ def move_file(file):
 
 
 
+# Create a temp folder in google drive to upload the files. You can delete this folder later.
+
 print "\nCreating a folder in Google Drive to upload files \n\n"
 print "Folder Name : " + temp_folder + "\n\n"
 
@@ -123,10 +132,14 @@ for filename in glob.glob('page_*.pdf'):
 
 
 
+#Upload the PDF files to google drive and OCR
+
+upload_counter = 1
+
 for pdf_file in sorted(files):
 
         
-            print "\n\nuploading " + pdf_file + " to google Drive \n\n " 
+            print "\n\nuploading " + pdf_file + " to google Drive. File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"   
             command = "gdput.py -t ocr -f   " +  drive_folder_id + " "  + pdf_file + " | tee " + pdf_file.split('.')[0] + ".log"
             
             
@@ -144,13 +157,16 @@ for pdf_file in sorted(files):
 
    	    move_file(pdf_file)
             print "\n\n========\n\n"
-
+            upload_counter = upload_counter + 1
 
 
 files = []
 for filename in glob.glob('page_*.txt'):
         files.append(filename)
         files.sort()
+
+
+# Split the text files to sync with the original images
 
 i = 1
 for textfile in files:
@@ -165,11 +181,6 @@ for textfile in files:
                                 i = i+1
                                                                 
                     
-
-
-
-
-
 
 
 files = []
