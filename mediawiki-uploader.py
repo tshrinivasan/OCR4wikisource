@@ -13,6 +13,9 @@ import glob
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
 
+indic_numbers = ConfigParser.ConfigParser()
+indic_numbers.read('indian_numerals.ini')
+
 
 url = config.get('settings','file_url')
 
@@ -55,6 +58,20 @@ print "\n\nLogged In to " + wiki_url.split('/w')[0]
 
 
 
+def convert_to_indic(language,number):
+        if language in ['bn','or','gu','te','ml','kn']:
+                number_string = ''
+                for num in list(str(number)):
+                        number_string = number_string + indic_numbers.get(language,num)
+                return number_string
+        else:
+                return number
+
+
+
+
+
+
 def move_file(file):
         source = file
         destination = temp_folder
@@ -78,7 +95,7 @@ for textfile in glob.glob('text_for_page*.txt'):
 
 for text_file in sorted(files):
         pageno = text_file.split('0')[-1].split('.')[0]
-        pagename = filename + "/" + str(pageno)
+        pagename = filename + "/"  + convert_to_indic(wikisource_language_code, pageno)
                             
 
            
@@ -88,7 +105,7 @@ for text_file in sorted(files):
 
         page = wikitools.Page(wiki,"Page:"+ pagename, followRedir=True)
         page.edit(text=content)
-        print "Uploaded at https://" + wikisource_language_code + "wikisource.org/wiki/Page:" + pagename + "\n"
+        print "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
         time.sleep(5)
         print "========="
 
