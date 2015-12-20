@@ -2,7 +2,7 @@
 
 
 There are many PDF files and DJVU files in WikiSource in various languages.
-In many wikisource projects, those files are splited into individual page as an Image.
+In many wikisource projects, those files are splited into individual page as an Image, using proofRead extension.
 
 Contributors see those images and type them manually.
 
@@ -62,10 +62,10 @@ Move all other text files to another folder.
 Once you are satisfied, you can place all the files in the current folder.
 
 
-For this, the PDF or DJVU file should be already splitted into individual pages in wiki souce.
+For this, the PDF or DJVU file should be already splitted into individual pages in wiki souce, using Proofread extension for wikisource.
 
 ```
-Example :  "https://" + wikisource_language_code + "wikisource.org/wiki/Page:" + filename/pageno
+Example :  "https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + filename/pageno
 ```
 
 Contact your wikisource team for splitting the files into individual pages.
@@ -77,7 +77,7 @@ Contact your wikisource team for splitting the files into individual pages.
 ToDo:
 ====
 
-* Some wikisource projects may have non-arabic numbers as suffix of the pages. Add the mapping for non-arablic numbers
+
 * This program uplads single page PDF to google drive. Google accepts 10 page PDF files. Create 10 page pdf files, upload, split the text files for faster operations.
 * Give a web interface using Django or Flask.
 * Port to other Operating Systems like Windows.
