@@ -96,8 +96,8 @@ for textfile in glob.glob('text_for_page*.txt'):
 for text_file in sorted(files):
 #        pageno = text_file.split('0')[-1].split('.')[0]
         pageno = int(text_file.split('.')[0].split('_')[-1])
-
-        pagename = filename + "/"  + convert_to_indic(wikisource_language_code, pageno)
+        
+        pagename = filename + "/"  + str(convert_to_indic(wikisource_language_code, pageno))
                             
 
            
