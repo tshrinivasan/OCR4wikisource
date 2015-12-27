@@ -9,7 +9,7 @@ import shutil
 import time
 import datetime
 import ConfigParser
-
+import urllib
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -28,7 +28,9 @@ wiki_password = config.get('settings','wiki_password')
 wikisource_language_code = config.get('settings','wikisource_language_code')
 
 
-filename = os.path.basename(url)
+original_url = urllib.unquote(url).decode('utf8')
+
+filename = os.path.basename(original_url)
 filetype = filename.split('.')[-1].lower()
 
 temp_folder = 'temp-'+ timestamp

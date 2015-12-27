@@ -9,9 +9,9 @@ In Ubuntu, run the following commands.
 ```
 sudo apt-get install djvulibre-bin  libdjvulibre21  libevdocument1 libevview1 libtiff-tools mupdf mupdf-tools pdftk poppler-utils 
 
-pip install --force-reinstall google-api-python-client
+sudo pip install --upgrade google-api-python-client
 
-sudo pip install clint requests wikitools poster oauth2client apiclient discovery
+sudo pip install clint requests wikitools poster oauth2client apiclient 
 ```
 
 Then, you have to install and setup gdcmdtools, commandline utilities to work with Google drive.
