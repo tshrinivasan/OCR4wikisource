@@ -170,18 +170,48 @@ for filename in glob.glob('page_*.txt'):
 
 # Split the text files to sync with the original images
 
-i = 1
-for textfile in files:
+
+
+
+if int(columns)==1:
+        i = 1
+        for textfile in files:
+                with open(textfile,'r') as filetosplit:
+                         content = filetosplit.read()
+                        
+                         if len(content)>50:
+                                 with open('txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
+                                         towrite.write(content)
+                                 i = i+1
+                         else:
+
+				with open('txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
+                                	towrite.write(' ')
+                                i = i+1
+
+                                                                                                                              
+
+                                        
+
+elif int(columns)==2:
+                                                                                                                                                
+    i = 1
+    for textfile in files:
         with open(textfile,'r') as filetosplit:
                 content = filetosplit.read()
-                records = content.split('________________')
-                
-                for record in records:
-                        if len(record)>50:
+		if "________________" in content:
+                	records = content.split('________________')
+                	print records
+                	for record in records[1::2]:
                                 with open('txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
                                         towrite.write(record)
                                 i = i+1
-                                                                
+                else:
+                        for no in range(int(columns)):
+                                with open('txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
+                          	      towrite.write(' ')
+                                i = i+1
+                                
                     
 
 
