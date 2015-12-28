@@ -58,7 +58,7 @@ with open(filename, 'wb') as f:
 if filetype.lower() == "djvu" :
         print "Found a djvu file. Converting to PDF file. " + "\n\n"
         command = "ddjvu --format=pdf " + filename + filename.split('.')[0] + ".pdf"
-        os.system(command)
+        os.system(command.encode('utf-8'))
 
         filename = filename.split('.')[0] + ".pdf"
         filetype = filename.split('.')[-1].lower()
@@ -72,7 +72,7 @@ if filetype.lower() == "pdf":
         print "Aligining the Pages of PDF file. \n" 
         command = "mutool poster -x " + str(columns)  + " " +  filename + "  currentfile.pdf"
 
-        os.system(command)
+        os.system(command.encode('utf-8'))
 
         print "Spliting the PDF into single pages. \n"
         burst_command = "pdftk currentfile.pdf burst"
@@ -117,7 +117,7 @@ print "\nCreating a folder in Google Drive to upload files \n\n"
 print "Folder Name : " + temp_folder + "\n\n"
 
 create_folder_in_drive_command = "gdmkdir.py " + temp_folder + " | tee folder_in_google_drive.log"
-os.system(create_folder_in_drive_command)
+os.system(create_folder_in_drive_command.encode('utf-8'))
 
 
 resultfile = open("folder_in_google_drive.log","r").readlines()
