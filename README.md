@@ -1,7 +1,8 @@
 #Note
-This program is evolvng heavily.
-Currently having issues with the Empty pages in the PDF files.
-Will fix it soon.
+This program is evolving heavily.
+Always use the latest version.
+
+Feel free to report any errors in the issues section.
 
 
 # OCR4wikisource

@@ -26,6 +26,7 @@ columns = config.get('settings','columns')
 wiki_username = config.get('settings','wiki_username')
 wiki_password = config.get('settings','wiki_password')
 wikisource_language_code = config.get('settings','wikisource_language_code')
+keep_temp_folder_in_google_drive = config.get('settings','keep_temp_folder_in_google_drive')
 
 
 original_url = urllib.unquote(url).decode('utf8')
@@ -33,7 +34,7 @@ original_url = urllib.unquote(url).decode('utf8')
 filename = os.path.basename(original_url)
 filetype = filename.split('.')[-1].lower()
 
-temp_folder = 'temp-'+ timestamp
+temp_folder = filename + '-temp-'+ timestamp
 
 
 
@@ -234,8 +235,16 @@ for i in chunks:
 
 
 
-print "\n Moving all temp files to " + temp_folder + "\n"
+print "\nMoving all temp files to " + temp_folder + "\n"
 command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* " + temp_folder
 os.system(command)
+
+
+
+if keep_temp_folder_in_google_drive == "no":
+        print "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
+        command = "gdrm.py " + drive_folder_id
+        os.system(command)
+
 
 print "\n\nDone. Check the text files start with text_for_page_ "
