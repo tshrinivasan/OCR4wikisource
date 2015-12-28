@@ -34,7 +34,7 @@ original_url = urllib.unquote(url).decode('utf8')
 filename = os.path.basename(original_url)
 filetype = filename.split('.')[-1].lower()
 
-temp_folder = filename + '-temp-'+ timestamp
+temp_folder = "OCR-" + filename + '-temp-'+ timestamp
 
 
 
