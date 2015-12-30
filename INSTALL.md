@@ -7,7 +7,7 @@ In Ubuntu, run the following commands.
 
 
 ```
-sudo apt-get install djvulibre-bin  libdjvulibre21  libevdocument1 libevview1 libtiff-tools mupdf mupdf-tools pdftk poppler-utils 
+sudo apt-get install djvulibre-bin  libdjvulibre21   libtiff-tools mupdf mupdf-tools pdftk poppler-utils 
 
 sudo pip install --upgrade google-api-python-client
 
@@ -20,13 +20,13 @@ Then, you have to install and setup gdcmdtools, commandline utilities to work wi
 Installing gdcmdtools
 =====================
 
-install gdcmdtools from https://github.com/tienfuc/gdcmdtools and complete the setup
-
-Download the zip and extract.
+Run the below commands to install gdcmdtools
 
 ```
-cd gdcmdtools
-sudo python setup.py install
+sudo pip uninstall apiclient
+sudo pip uninstall google-api-python-client
+sudo pip install google-api-python-client
+sudo pip install gdcmdtools
 ```
 
 
