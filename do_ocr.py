@@ -237,7 +237,7 @@ for i in chunks:
 
 print "\nMoving all temp files to " + temp_folder + "\n"
 command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* " + temp_folder
-os.system(command)
+os.system(command.encode('utf-8'))
 
 
 
