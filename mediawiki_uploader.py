@@ -46,11 +46,19 @@ except:
 	print "Can not connect with wiki. Check the URL"
 
 
-try:
-	wiki.login(username=wiki_username,password=wiki_password)
 
-except:
-	print "Invalid Username or Password"
+
+login_result = wiki.login(username=wiki_username,password=wiki_password)
+print "Login Status = " + str(login_result)
+if login_result == True:
+        print "\n\nLogged in to "  + + wiki_url.split('/w')[0]
+else:
+        print "Invalid username or password error"
+        sys.exit()
+
+
+
+                        
 
 
 print "\n\nLogged In to " + wiki_url.split('/w')[0]
