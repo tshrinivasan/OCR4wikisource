@@ -1,3 +1,6 @@
+# Version
+1.27
+
 #Note
 This program is evolving heavily.
 Always use the latest version.
