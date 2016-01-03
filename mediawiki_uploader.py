@@ -9,6 +9,7 @@ import ConfigParser
 import time
 import datetime
 import glob
+import urllib
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -30,10 +31,14 @@ ts = time.time()
 timestamp  = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
 
 
-filename = os.path.basename(url)
+original_url = urllib.unquote(url).decode('utf8')
+filename = os.path.basename(original_url)
+
 filetype = filename.split('.')[-1].lower()
 
 temp_folder = 'temp-'+ timestamp
+
+
 
 
 
@@ -50,6 +55,7 @@ except:
 
 login_result = wiki.login(username=wiki_username,password=wiki_password)
 print "Login Status = " + str(login_result)
+
 if login_result == True:
         print "\n\nLogged in to "  + + wiki_url.split('/w')[0]
 else:
@@ -61,7 +67,7 @@ else:
                         
 
 
-print "\n\nLogged In to " + wiki_url.split('/w')[0]
+
 
 
 
