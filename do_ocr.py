@@ -10,14 +10,48 @@ import time
 import datetime
 import ConfigParser
 import urllib
+import logging
+import urllib2
+
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
 
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
 
 ts = time.time()
 timestamp  = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
+
+
+if not os.path.isdir("./log"):
+            os.mkdir("./log")
+
+
+# create a file handler
+log_file = './log/do_ocr-' + timestamp + '.log'
+
+handler = logging.FileHandler(log_file)
+handler.setLevel(logging.INFO)
+
+# create a logging format
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+
+# add the handlers to the logger
+
+logger.addHandler(handler)
+
+
+version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4wikisource/master/VERSION').read()
+logger.info("Running do_ocr.py " + version.strip('\n'))
+
+
 
 #Read the config file
 
@@ -29,17 +63,40 @@ wikisource_language_code = config.get('settings','wikisource_language_code')
 keep_temp_folder_in_google_drive = config.get('settings','keep_temp_folder_in_google_drive')
 
 
+logger.info("URL = " + url )
+logger.info("Columns = " + columns )
+logger.info("Wiki Username = " + wiki_username)
+logger.info("Wiki Password = " + "Not logging the password")
+logger.info("Wiki Source Language Code = " + wikisource_language_code )
+logger.info("Keep Temp folder in  Google Drive = " + keep_temp_folder_in_google_drive)
+
+
+
+
+
 original_url = urllib.unquote(url).decode('utf8')
+
+logger.info("Original URL = " + original_url )
+
 
 filename = os.path.basename(original_url)
 filetype = filename.split('.')[-1].lower()
 
+logger.info("File Name = " + filename)
+logger.info("File Type = " + filetype)
+
+
 temp_folder = "OCR-" + filename + '-temp-'+ timestamp
+logger.info("Created Temp folder " + temp_folder)
+
+
+
 
 
 
 print "\n\nDownloading the file " + filename + "\n\n"
 
+logger.info("Downloading the file " + filename )
 
 #Download the file
 
@@ -52,13 +109,20 @@ with open(filename, 'wb') as f:
                         f.flush()
 
 
+logger.info("Download Completed")
+
+
+
 
 # Convert djvu to PDF
 
 if filetype.lower() == "djvu" :
-        print "Found a djvu file. Converting to PDF file. " + "\n\n"
+        message  =  "Found a djvu file. Converting to PDF file. " + "\n\n"
+        logger.info(message)
+        
         command = "ddjvu --format=pdf " + filename + filename.split('.')[0] + ".pdf"
         os.system(command.encode('utf-8'))
+        logger.info("Running " + command)
 
         filename = filename.split('.')[0] + ".pdf"
         filetype = filename.split('.')[-1].lower()
@@ -69,14 +133,20 @@ if filetype.lower() == "pdf":
 
 	# split the PDF files vertically based on the column numbers
 
-        print "Aligining the Pages of PDF file. \n" 
+        message =  "Aligining the Pages of PDF file. \n"
+        logger.info(message)
         command = "mutool poster -x " + str(columns)  + " " +  filename + "  currentfile.pdf"
-
+        logger.info("Running " + command.encode('utf-8'))
+        
         os.system(command.encode('utf-8'))
+                
 
-        print "Spliting the PDF into single pages. \n"
+        message =  "Spliting the PDF into single pages. \n"
+        logger.info(message)
         burst_command = "pdftk currentfile.pdf burst"
         os.system(burst_command)
+        logger.info("Running " + burst_command) 
+
         
         files = []
         for filename in glob.glob('pg*.pdf'):
@@ -86,11 +156,13 @@ if filetype.lower() == "pdf":
         chunks=[files[x:x+int(columns)] for x in xrange(0, len(files), int(columns))]
 
         counter = 1
-        print "Joining the PDF files ...\n"
+        message =  "Joining the PDF files ...\n"
+        logger.info(message)
+        
         for i in chunks:
             com =  ' '.join(i)
             command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
-             
+            logger.info("Running " + command) 
             counter = counter + 1
             os.system(command)
                                 
@@ -106,17 +178,18 @@ def move_file(file):
         else:
                 os.mkdir(temp_folder)
                 shutil.move(source,destination)
-        print "Moving the file " + file + " to the folder " + temp_folder + "\n"
+        message =  "Moving the file " + file + " to the folder " + temp_folder + "\n"
+        logger.info(message)
 
 
 
 
 # Create a temp folder in google drive to upload the files. You can delete this folder later.
 
-print "\nCreating a folder in Google Drive to upload files \n\n"
-print "Folder Name : " + temp_folder + "\n\n"
+logger.info( "\nCreating a folder in Google Drive to upload files. Folder Name : " + temp_folder + "\n\n")
 
 create_folder_in_drive_command = "gdmkdir.py " + temp_folder + " | tee folder_in_google_drive.log"
+logger.info("Running " + create_folder_in_drive_command.encode('utf-8'))
 os.system(create_folder_in_drive_command.encode('utf-8'))
 
 
@@ -142,10 +215,11 @@ upload_counter = 1
 for pdf_file in sorted(files):
 
         
-            print "\n\nuploading " + pdf_file + " to google Drive. File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"   
+            message= "\n\nuploading " + pdf_file + " to google Drive. File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
+            logger.info(message)
             command = "gdput.py -t ocr -f   " +  drive_folder_id + " "  + pdf_file + " | tee " + pdf_file.split('.')[0] + ".log"
             
-            
+            logger.info("Running " + command)
             os.system(command)
 
             resultfile = open(pdf_file.split('.')[0] + ".log","r").readlines()
@@ -155,11 +229,13 @@ for pdf_file in sorted(files):
                                     fileid = line.split(":")[1].strip()
                                     filename = pdf_file.split(".")[0] + ".txt"
                                     get_command = "gdget.py -f txt -s " + filename + " " + fileid
-                                    print "\n\nDownloading the OCRed text \n\n "
+                                    logger.info( "\n\nDownloading the OCRed text \n\n ")
+                                    logger.info("Running " + command)
                                     os.system(get_command)
+                                    
 
    	    move_file(pdf_file)
-            print "\n\n========\n\n"
+            logger.info( "\n\n========\n\n")
             upload_counter = upload_counter + 1
 
 
@@ -171,7 +247,7 @@ for filename in glob.glob('page_*.txt'):
 
 # Split the text files to sync with the original images
 
-
+logger.info("Split the text files to sync with the original images")
 
 
 if int(columns)==1:
@@ -216,6 +292,8 @@ elif int(columns)==2:
                     
 
 
+logger.info("Joining text files based on Column No")
+                                
 files = []
 for filename in glob.glob('txt*.txt'):
         files.append(filename)
@@ -231,20 +309,26 @@ for i in chunks:
         com =  ' '.join(i)
         command = "cat  " + com + " > " + "text_for_page_" + str(counter).zfill(5) + ".txt"
         counter = counter + 1
+        logger.info("Running " + command)
         os.system(command)
 
 
 
-print "\nMoving all temp files to " + temp_folder + "\n"
+message =  "\nMoving all temp files to " + temp_folder + "\n"
+logger.info(message)
 command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* " + temp_folder
+logger.info("Running " + command.encode('utf-8'))
 os.system(command.encode('utf-8'))
 
 
 
 if keep_temp_folder_in_google_drive == "no":
-        print "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
+        message =  "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
+        logger.info(message)
         command = "gdrm.py " + drive_folder_id
+        logger.info("Running " + command)
         os.system(command)
 
 
-print "\n\nDone. Check the text files start with text_for_page_ "
+message =  "\n\nDone. Check the text files start with text_for_page_ "
+logger.info(message)

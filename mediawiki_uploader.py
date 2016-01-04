@@ -10,6 +10,8 @@ import time
 import datetime
 import glob
 import urllib
+import logging
+import urllib2
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -19,7 +21,6 @@ indic_numbers.read('indian_numerals.ini')
 
 
 url = config.get('settings','file_url')
-
 columns = config.get('settings','columns')
 wiki_username = config.get('settings','wiki_username')
 wiki_password = config.get('settings','wiki_password')
@@ -27,8 +28,49 @@ wikisource_language_code = config.get('settings','wikisource_language_code')
 
 
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
 ts = time.time()
 timestamp  = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
+
+
+if not os.path.isdir("./log"):
+            os.mkdir("./log")
+
+
+
+# create a file handler
+log_file = './log/mediawiki_uploader_' + timestamp + '.log'
+
+handler = logging.FileHandler(log_file)
+handler.setLevel(logging.INFO)
+
+# create a logging format
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+
+# add the handlers to the logger
+
+logger.addHandler(handler)
+
+
+version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4wikisource/master/VERSION').read()
+logger.info("Running mediawiki_uploader.py " + version.strip('\n'))
+
+
+logger.info("URL = " + url )
+logger.info("Columns = " + columns )
+logger.info("Wiki Username = " + wiki_username)
+logger.info("Wiki Password = " + "Not logging the password")
+logger.info("Wiki Source Language Code = " + wikisource_language_code )
+
+
+
+
 
 
 original_url = urllib.unquote(url).decode('utf8')
@@ -38,33 +80,46 @@ filetype = filename.split('.')[-1].lower()
 
 temp_folder = 'temp-'+ timestamp
 
+logger.info("File Name = " + filename)
+logger.info("File Type = " + filetype)
+
+
+logger.info("Original URL = " + original_url )
 
 
 
 
 wiki_url = "https://" + wikisource_language_code + ".wikisource.org/w/api.php"
 
+logger.info("Wiki URL = " + wiki_url)
+
 
 try:
 	wiki = wikitools.wiki.Wiki(wiki_url)
 except:
-	print "Can not connect with wiki. Check the URL"
+	message =  "Can not connect with wiki. Check the URL"
+	logger.info(message)
 
 
 
 
 login_result = wiki.login(username=wiki_username,password=wiki_password)
-print "Login Status = " + str(login_result)
+message =  "Login Status = " + str(login_result)
+logging.info(message)
+
 
 if login_result == True:
-        print "\n\nLogged in to "  +  wiki_url.split('/w')[0]
+        message =  "\n\nLogged in to "  +  wiki_url.split('/w')[0]
+	logging.info(message)
 else:
-        print "Invalid username or password error"
+        message =  "Invalid username or password error"
+	logging.info(message)
         sys.exit()
 
 
 
                         
+
 
 
 
@@ -95,7 +150,8 @@ def move_file(file):
         else:
                 os.mkdir(temp_folder)
                 shutil.move(source,destination)
-        print "Moving the file " + file + " to the folder " + temp_folder + "\n"
+        message = "Moving the file " + file + " to the folder " + temp_folder + "\n"
+	logging.info(message)
                                                 
 
 
@@ -117,18 +173,20 @@ for text_file in sorted(files):
            
         content = open(text_file,'r').read()
 
-        print "\nUploading content for " + text_file
+        message =  "\nUploading content for " + text_file
+	logging.info(message)
 
         page = wikitools.Page(wiki,"Page:"+ pagename, followRedir=True)
         page.edit(text=content)
-        print "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
+        message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
+	logging.info(message)
         time.sleep(5)
-        print "========="
+        logging.info("=========")
 
 
         move_file(text_file)
         
-print "\nDone. Uploaded all text files to wiki source"
+logging.info("\nDone. Uploaded all text files to wiki source")
 
                                                         
 
