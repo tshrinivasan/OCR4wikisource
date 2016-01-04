@@ -153,18 +153,30 @@ if filetype.lower() == "pdf":
                 files.append(filename)
                 files.sort()
 
-        chunks=[files[x:x+int(columns)] for x in xrange(0, len(files), int(columns))]
 
-        counter = 1
-        message =  "Joining the PDF files ...\n"
-        logger.info(message)
-        
-        for i in chunks:
-            com =  ' '.join(i)
-            command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
-            logger.info("Running " + command) 
-            counter = counter + 1
-            os.system(command)
+        if columns == "1":
+                counter = 1
+                for pdf in files:
+                        command = "cp " + pdf +  " page_" + str(counter).zfill(5) + ".pdf"
+                        logger.info("Running Command " + command)
+                        counter = counter + 1
+                        os.system(command)
+
+
+        if columns == "2":
+
+	        chunks=[files[x:x+int(columns)] for x in xrange(0, len(files), int(columns))]
+
+	        counter = 1
+	        message =  "Joining the PDF files ...\n"
+	        logger.info(message)
+	        
+	        for i in chunks:
+	            com =  ' '.join(i)
+	            command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
+	            logger.info("Running " + command) 
+	            counter = counter + 1
+	            os.system(command)
                                 
 
         

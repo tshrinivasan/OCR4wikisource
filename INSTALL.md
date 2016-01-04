@@ -30,6 +30,26 @@ sudo pip install gdcmdtools
 ```
 
 
+# Note for Ubuntu 12.04 users
+
+Do the above steps, along with the following.
+
+mutool is the tool used to split the PDF files vertically for two or more column files.
+
+To install it in ubuntu 12.04, run the below commands
+
+
+```
+sudo apt-get install python-software-properties
+
+sudo add-apt-repository ppa:ubuntuhandbook1/apps
+
+sudo apt-get update
+
+audo apt-get install mupdf-tools
+```
+
+
 # API Setup
  * Create a new project for this tool to access your Google drive
     * Visit https://console.developers.google.com/ , create project, name it anything you like, ex: gdcmdtools.
