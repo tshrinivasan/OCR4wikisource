@@ -1,9 +1,10 @@
 # Version
-1.29
+1.30
 
 #Note
 This program is evolving heavily.
 Always use the latest version.
+Compare the version number with your's version.
 
 Feel free to report any errors in the issues section.
 

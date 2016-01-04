@@ -33,7 +33,7 @@ if not os.path.isdir("./log"):
 
 
 # create a file handler
-log_file = './log/do_ocr-' + timestamp + '.log'
+log_file = './log/do_ocr_' + timestamp + '_log.txt'
 
 handler = logging.FileHandler(log_file)
 handler.setLevel(logging.INFO)
