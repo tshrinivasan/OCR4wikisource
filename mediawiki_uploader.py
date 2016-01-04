@@ -57,7 +57,7 @@ login_result = wiki.login(username=wiki_username,password=wiki_password)
 print "Login Status = " + str(login_result)
 
 if login_result == True:
-        print "\n\nLogged in to "  + + wiki_url.split('/w')[0]
+        print "\n\nLogged in to "  +  wiki_url.split('/w')[0]
 else:
         print "Invalid username or password error"
         sys.exit()
