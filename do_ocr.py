@@ -120,7 +120,7 @@ if filetype.lower() == "djvu" :
         message  =  "Found a djvu file. Converting to PDF file. " + "\n\n"
         logger.info(message)
         
-        command = "ddjvu --format=pdf " + filename + filename.split('.')[0] + ".pdf"
+        command = "ddjvu --format=pdf " + filename + "   " +  filename.split('.')[0] + ".pdf"
         os.system(command.encode('utf-8'))
         logger.info("Running " + command)
 
