@@ -177,7 +177,7 @@ for text_file in sorted(files):
 
         pageno = int(text_file.split('.')[0].split('_')[-1])
         
-        pagename = filename + "/"  + str(convert_to_indic(wikisource_language_code, pageno))
+#        pagename = filename + "/"  + str(convert_to_indic(wikisource_language_code, pageno))
                             
 	indic_page_number =  str(convert_to_indic(wikisource_language_code, pageno))   
 	logging.info("Filename = " + filename)
