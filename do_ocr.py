@@ -52,6 +52,13 @@ version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4w
 logger.info("Running do_ocr.py " + version.strip('\n'))
 
 
+os_info = open("/etc/lsb-release")
+for line in os_info:
+	if  "DISTRIB_DESCRIPTION" in line:
+		os_version = line.split("=")[1]
+
+logging.info("Operating system = " + os_version)
+
 
 #Read the config file
 

@@ -62,6 +62,16 @@ version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4w
 logger.info("Running mediawiki_uploader.py " + version.strip('\n'))
 
 
+
+os_info = open("/etc/lsb-release")
+for line in os_info:
+	if  "DISTRIB_DESCRIPTION" in line:
+		os_version = line.split("=")[1]
+
+logging.info("Operating system = " + os_version)
+
+
+
 logger.info("URL = " + url )
 logger.info("Columns = " + columns )
 logger.info("Wiki Username = " + wiki_username)
@@ -164,11 +174,18 @@ for textfile in glob.glob('text_for_page*.txt'):
 
 
 for text_file in sorted(files):
-#        pageno = text_file.split('0')[-1].split('.')[0]
+
         pageno = int(text_file.split('.')[0].split('_')[-1])
         
         pagename = filename + "/"  + str(convert_to_indic(wikisource_language_code, pageno))
                             
+	indic_page_number =  str(convert_to_indic(wikisource_language_code, pageno))   
+	logging.info("Filename = " + filename)
+	logging.info("Indic page no = " + indic_page_number)
+
+   
+        pagename = filename.encode('utf-8') + "/"  + indic_page_number
+        logging.info("Page name = " + pagename)
 
            
         content = open(text_file,'r').read()
