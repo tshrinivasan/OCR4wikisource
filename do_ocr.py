@@ -12,6 +12,7 @@ import ConfigParser
 import urllib
 import logging
 import urllib2
+import os.path
 
 
 config = ConfigParser.ConfigParser()
@@ -48,7 +49,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4wikisource/master/VERSION').read()
+version =  open('VERSION').read()
 logger.info("Running do_ocr.py " + version.strip('\n'))
 
 
@@ -57,7 +58,10 @@ for line in os_info:
 	if  "DISTRIB_DESCRIPTION" in line:
 		os_version = line.split("=")[1]
 
-logging.info("Operating system = " + os_version)
+logging.info("Operating System = " + os_version)
+
+
+
 
 
 #Read the config file
@@ -68,6 +72,9 @@ wiki_username = config.get('settings','wiki_username')
 wiki_password = config.get('settings','wiki_password')
 wikisource_language_code = config.get('settings','wikisource_language_code')
 keep_temp_folder_in_google_drive = config.get('settings','keep_temp_folder_in_google_drive')
+#start_page = config.get('settings','start_page')
+#end_page = config.get('settings','end_page')
+
 
 
 logger.info("URL = " + url )
@@ -76,7 +83,8 @@ logger.info("Wiki Username = " + wiki_username)
 logger.info("Wiki Password = " + "Not logging the password")
 logger.info("Wiki Source Language Code = " + wikisource_language_code )
 logger.info("Keep Temp folder in  Google Drive = " + keep_temp_folder_in_google_drive)
-
+#logger.info("Start Page = " + str(start_page))
+#logger.info("End Page = " + str(end_page))
 
 
 
@@ -98,25 +106,26 @@ logger.info("Created Temp folder " + temp_folder)
 
 
 
+if os.path.isfile(filename):
+            logging.info(filename + " Already Exists. Skipping the download.")
+
+else:
+            print "\n\nDownloading the file " + filename + "\n\n"
+
+            logger.info("Downloading the file " + filename )
+
+            #Download the file
+
+            r = requests.get(url, stream=True)
+            with open(filename, 'wb') as f:
+                        total_length = int(r.headers.get('content-length'))
+                        for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
+                                    if chunk:
+                                                f.write(chunk)
+                                                f.flush()
 
 
-
-print "\n\nDownloading the file " + filename + "\n\n"
-
-logger.info("Downloading the file " + filename )
-
-#Download the file
-
-r = requests.get(url, stream=True)
-with open(filename, 'wb') as f:
-            total_length = int(r.headers.get('content-length'))
-            for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
-
-
-logger.info("Download Completed")
+            logger.info("Download Completed")
 
 
 
@@ -124,15 +133,23 @@ logger.info("Download Completed")
 # Convert djvu to PDF
 
 if filetype.lower() == "djvu" :
-        message  =  "Found a djvu file. Converting to PDF file. " + "\n\n"
-        logger.info(message)
-        
-        command = "ddjvu --format=pdf " + filename + "   " +  filename.split('.')[0] + ".pdf"
-        os.system(command.encode('utf-8'))
-        logger.info("Running " + command)
 
-        filename = filename.split('.')[0] + ".pdf"
-        filetype = filename.split('.')[-1].lower()
+            if os.path.isfile(filename.split('.')[0] + ".pdf"):
+                        logging.info("Found PDF version. Skipping DJVU to PDF conversion")
+                        filename = filename.split('.')[0] + ".pdf"
+                        filetype = filename.split('.')[-1].lower()
+                                                        
+            else:
+                        
+                        message  =  "Found a djvu file. Converting to PDF file. " + "\n\n"
+                        logger.info(message)
+        
+                        command = "ddjvu --format=pdf " + filename + "   " +  filename.split('.')[0] + ".pdf"
+                        os.system(command.encode('utf-8'))
+                        logger.info("Running " + command)
+
+                        filename = filename.split('.')[0] + ".pdf"
+                        filetype = filename.split('.')[-1].lower()
         
 
 
@@ -160,30 +177,18 @@ if filetype.lower() == "pdf":
                 files.append(filename)
                 files.sort()
 
+        chunks=[files[x:x+int(columns)] for x in xrange(0, len(files), int(columns))]
 
-        if columns == "1":
-                counter = 1
-                for pdf in files:
-                        command = "cp " + pdf +  " page_" + str(counter).zfill(5) + ".pdf"
-                        logger.info("Running Command " + command)
-                        counter = counter + 1
-                        os.system(command)
-
-
-        if columns == "2":
-
-	        chunks=[files[x:x+int(columns)] for x in xrange(0, len(files), int(columns))]
-
-	        counter = 1
-	        message =  "Joining the PDF files ...\n"
-	        logger.info(message)
-	        
-	        for i in chunks:
-	            com =  ' '.join(i)
-	            command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
-	            logger.info("Running " + command) 
-	            counter = counter + 1
-	            os.system(command)
+        counter = 1
+        message =  "Joining the PDF files ...\n"
+        logger.info(message)
+        
+        for i in chunks:
+            com =  ' '.join(i)
+            command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
+            logger.info("Running " + command) 
+            counter = counter + 1
+            os.system(command)
                                 
 
         
@@ -225,6 +230,21 @@ for filename in glob.glob('page_*.pdf'):
             files.append(filename)
 
 
+print files
+
+#pages = []
+#if not end_page == "END" :
+#    for pageno in range(int(start_page), int(end_page) + 1):
+#         pages.append("page_" + str(pageno).zfill(5) + ".pdf")   
+
+#if end_page == "END":
+#    for pageno in range(int(start_page),len(files) +1):
+#        pages.append("page_" + str(pageno).zfill(5) + ".pdf")
+        
+
+
+
+
 
 
 #Upload the PDF files to google drive and OCR
@@ -233,13 +253,22 @@ upload_counter = 1
 
 for pdf_file in sorted(files):
 
-        
-            message= "\n\nuploading " + pdf_file + " to google Drive. File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
+    print pdf_file
+    if not os.path.isfile(pdf_file.split('.')[0] + ".upload"):                        
+                                                
+
+            message= "\n\nuploading " + pdf_file + " to google Drive. "     # File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
             logger.info(message)
             command = "gdput.py -t ocr -f   " +  drive_folder_id + " "  + pdf_file + " | tee " + pdf_file.split('.')[0] + ".log"
             
             logger.info("Running " + command)
-            os.system(command)
+            upload_status = os.system(command)
+
+            if upload_status == 0:
+                        create_temp_file = "touch " + pdf_file.split('.')[0] + ".upload"
+                        logger.info("\n  Creating temp file " + create_temp_file + "\n")
+                        os.system(create_temp_file)
+                                                            
 
             resultfile = open(pdf_file.split('.')[0] + ".log","r").readlines()
 
@@ -256,6 +285,7 @@ for pdf_file in sorted(files):
    	    move_file(pdf_file)
             logger.info( "\n\n========\n\n")
             upload_counter = upload_counter + 1
+
 
 
 files = []
@@ -335,9 +365,10 @@ for i in chunks:
 
 message =  "\nMoving all temp files to " + temp_folder + "\n"
 logger.info(message)
-command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* " + temp_folder
+command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt*  *.upload" + temp_folder
 logger.info("Running " + command.encode('utf-8'))
 os.system(command.encode('utf-8'))
+
 
 
 
