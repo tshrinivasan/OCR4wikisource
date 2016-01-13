@@ -1,5 +1,5 @@
 # Version
-1.35
+1.36
 
 #Note
 This program is evolving heavily.

@@ -49,8 +49,8 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-version =  open('VERSION').read()
-logger.info("Running do_ocr.py " + version.strip('\n'))
+version =  "1.36"
+logger.info("Running do_ocr.py " + version)
 
 
 os_info = open("/etc/lsb-release")
@@ -182,13 +182,30 @@ if filetype.lower() == "pdf":
         counter = 1
         message =  "Joining the PDF files ...\n"
         logger.info(message)
-        
-        for i in chunks:
-            com =  ' '.join(i)
-            command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
-            logger.info("Running " + command) 
-            counter = counter + 1
-            os.system(command)
+
+        if columns == "1":
+                counter = 1
+                for pdf in files:
+                        command = "cp " + pdf +  " page_" + str(counter).zfill(5) + ".pdf"
+                        logger.info("Running Command " + command)
+                        counter = counter + 1
+                        os.system(command)
+
+
+        if columns == "2":
+
+	        chunks=[files[x:x+int(columns)] for x in xrange(0, len(files), int(columns))]
+
+	        counter = 1
+	        message =  "Joining the PDF files ...\n"
+	        logger.info(message)
+	        
+	        for i in chunks:
+	            com =  ' '.join(i)
+	            command = "pdfunite " + com + " " + "page_" + str(counter).zfill(5) + ".pdf"
+	            logger.info("Running " + command) 
+	            counter = counter + 1
+	            os.system(command)
                                 
 
         
@@ -230,7 +247,7 @@ for filename in glob.glob('page_*.pdf'):
             files.append(filename)
 
 
-print files
+
 
 #pages = []
 #if not end_page == "END" :
@@ -253,7 +270,7 @@ upload_counter = 1
 
 for pdf_file in sorted(files):
 
-    print pdf_file
+
     if not os.path.isfile(pdf_file.split('.')[0] + ".upload"):                        
                                                 
 
