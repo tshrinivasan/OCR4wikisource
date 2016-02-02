@@ -46,7 +46,7 @@ sudo add-apt-repository ppa:ubuntuhandbook1/apps
 
 sudo apt-get update
 
-audo apt-get install mupdf-tools
+sudo apt-get install mupdf-tools
 ```
 
 

@@ -13,6 +13,9 @@ import urllib
 import logging
 import urllib2
 
+
+version = "1.37"
+
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
 
@@ -58,8 +61,8 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4wikisource/master/VERSION').read()
-logger.info("Running mediawiki_uploader.py " + version.strip('\n'))
+version =  "1.36"
+logger.info("Running do_ocr.py " + version)
 
 
 
