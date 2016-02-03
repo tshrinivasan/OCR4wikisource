@@ -14,7 +14,8 @@ import logging
 import urllib2
 import os.path
 
-version = "1.37"
+
+version = "1.38"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -104,6 +105,10 @@ logger.info("File Type = " + filetype)
 
 temp_folder = "OCR-" + filename + '-temp-'+ timestamp
 logger.info("Created Temp folder " + temp_folder)
+
+if not os.path.isdir(temp_folder):
+      os.mkdir(temp_folder)
+                            
 
 
 
@@ -300,11 +305,23 @@ for pdf_file in sorted(files):
                                     os.system(get_command)
                                     
 
-   	    move_file(pdf_file)
+#   	    move_file(pdf_file)
             logger.info( "\n\n========\n\n")
             upload_counter = upload_counter + 1
 
 
+
+pdf_count = len(glob.glob('page_*.pdf'))
+text_count = len(glob.glob('page_*.txt'))
+
+if not pdf_count == text_count:
+            logger.info("\n\n=========ERROR===========\n\n")
+            logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the PDF files \n\n")
+            sys.exit()
+
+            
+
+            
 
 files = []
 for filename in glob.glob('page_*.txt'):
