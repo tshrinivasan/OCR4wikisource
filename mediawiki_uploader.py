@@ -14,7 +14,7 @@ import logging
 import urllib2
 
 
-version = "1.38"
+version = "1.39"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -28,7 +28,7 @@ columns = config.get('settings','columns')
 wiki_username = config.get('settings','wiki_username')
 wiki_password = config.get('settings','wiki_password')
 wikisource_language_code = config.get('settings','wikisource_language_code')
-
+edit_summary = config.get('settings','edit_summary')
 
 
 logging.basicConfig(level=logging.INFO)
@@ -61,7 +61,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-version =  "1.36"
+
 logger.info("Running do_ocr.py " + version)
 
 
@@ -80,7 +80,7 @@ logger.info("Columns = " + columns )
 logger.info("Wiki Username = " + wiki_username)
 logger.info("Wiki Password = " + "Not logging the password")
 logger.info("Wiki Source Language Code = " + wikisource_language_code )
-
+logger.info("Edit Summary = " + edit_summary)
 
 
 
@@ -197,7 +197,7 @@ for text_file in sorted(files):
 	logging.info(message)
 
         page = wikitools.Page(wiki,"Page:"+ pagename, followRedir=True)
-        page.edit(text=content)
+        page.edit(text=content,summary=edit_summary)
         message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
 	logging.info(message)
         time.sleep(5)

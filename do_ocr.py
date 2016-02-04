@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.38"
+version = "1.39"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -417,3 +417,19 @@ if keep_temp_folder_in_google_drive == "no":
 
 message =  "\n\nDone. Check the text files start with text_for_page_ "
 logger.info(message)
+
+
+
+
+result_text_count = len(glob.glob('text_for_page_*.txt'))
+
+if not pdf_count == result_text_count:
+            logger.info("\n\n=========ERROR===========\n\n")
+            logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the PDF     files \n\n")
+            sys.exit()
+
+if  pdf_count == result_text_count:
+            logger.info("\n\nThe PDF files and result text files are equval. Now run the mediawiki_uploader.py script\n\n")
+            
+
+                                        
