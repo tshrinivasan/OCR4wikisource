@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.39"
+version = "1.40"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -285,12 +285,8 @@ for pdf_file in sorted(files):
             command = "gdput.py -t ocr -f   " +  drive_folder_id + " "  + pdf_file + " | tee " + pdf_file.split('.')[0] + ".log"
             
             logger.info("Running " + command)
-            upload_status = os.system(command)
+            os.system(command)
 
-            if upload_status == 0:
-                        create_temp_file = "touch " + pdf_file.split('.')[0] + ".upload"
-                        logger.info("\n  Creating temp file " + create_temp_file + "\n")
-                        os.system(create_temp_file)
                                                             
 
             resultfile = open(pdf_file.split('.')[0] + ".log","r").readlines()
@@ -302,8 +298,16 @@ for pdf_file in sorted(files):
                                     get_command = "gdget.py -f txt -s " + filename + " " + fileid
                                     logger.info( "\n\nDownloading the OCRed text \n\n ")
                                     logger.info("Running " + command)
-                                    os.system(get_command)
-                                    
+                              #      os.system(get_command)
+
+
+                                    download_status = os.system(get_command)
+
+                                    if download_status == 0:
+                                                create_temp_file = "touch " + pdf_file.split('.')[0] + ".upload"
+                                                logger.info("\n  Creating temp file " + create_temp_file + "\n")
+                                                os.system(create_temp_file)
+                        
 
 #   	    move_file(pdf_file)
             logger.info( "\n\n========\n\n")
@@ -314,8 +318,19 @@ for pdf_file in sorted(files):
 pdf_count = len(glob.glob('page_*.pdf'))
 text_count = len(glob.glob('page_*.txt'))
 
+
+
 if not pdf_count == text_count:
+
             logger.info("\n\n=========ERROR===========\n\n")
+            
+            for i in range(1,int(pdf_count)+1):
+                        txt_file = "page_" + str(i).zfill(5) + ".txt"
+                        if not os.path.isfile(txt_file):
+                                    logger.info( "Missing " + txt_file)
+                                    logger.info( "page_" + str(i).zfill(5) + ".pdf" + " should be reuploaded ")
+                                                                         
+
             logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the PDF files \n\n")
             sys.exit()
 
