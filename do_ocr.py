@@ -15,7 +15,8 @@ import urllib2
 import os.path
 
 
-version = "1.40"
+version = "1.41"
+
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -49,6 +50,15 @@ handler.setFormatter(formatter)
 # add the handlers to the logger
 
 logger.addHandler(handler)
+
+
+
+latest_version =  urllib2.urlopen('https://raw.githubusercontent.com/tshrinivasan/OCR4wikisource/master/VERSION').read()
+
+if not version == latest_version:
+            logger.info("\n\nYour OCR4WikiSource version is " + version + ". This is old. The latest version is " + latest_version + ". Update from https://github.com/tshrinivasan/OCR4wikisource \n\n")
+            sys.exit()
+
 
 
 
