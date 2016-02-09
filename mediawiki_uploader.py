@@ -14,7 +14,7 @@ import logging
 import urllib2
 
 
-version = "1.42"
+version = "1.43"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")

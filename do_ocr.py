@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.42"
+version = "1.43"
 
 
 config = ConfigParser.ConfigParser()
@@ -160,7 +160,7 @@ if filetype.lower() == "djvu" :
                         message  =  "Found a djvu file. Converting to PDF file. " + "\n\n"
                         logger.info(message)
         
-                        command = "ddjvu --format=pdf " +  "'" + filename +  "'" + "   " + "'" +  filename.split('.')[0] + "'" + ".pdf"
+                        command = "ddjvu --format=pdf " +  '"' + filename +  '"' + "   " + '"' +  filename.split('.')[0] + '"' + ".pdf"
                         os.system(command.encode('utf-8'))
                         logger.info("Running " + command)
 
@@ -175,7 +175,7 @@ if filetype.lower() == "pdf":
 
         message =  "Aligining the Pages of PDF file. \n"
         logger.info(message)
-        command = "mutool poster -x " + str(columns)  + " " + "'" +  filename + "'" +  "  currentfile.pdf"
+        command = "mutool poster -x " + str(columns)  + " " + '"' +  filename + '"' +  "  currentfile.pdf"
         logger.info("Running " + command.encode('utf-8'))
         
         os.system(command.encode('utf-8'))
@@ -245,7 +245,7 @@ def move_file(file):
 
 logger.info( "\nCreating a folder in Google Drive to upload files. Folder Name : " + temp_folder + "\n\n")
 
-create_folder_in_drive_command = "gdmkdir.py " + "'" +  temp_folder + "'"  + " | tee folder_in_google_drive.log"
+create_folder_in_drive_command = "gdmkdir.py " + '"' +  temp_folder + '"'  + " | tee folder_in_google_drive.log"
 logger.info("Running " + create_folder_in_drive_command.encode('utf-8'))
 os.system(create_folder_in_drive_command.encode('utf-8'))
 
@@ -425,7 +425,7 @@ for i in chunks:
 
 message =  "\nMoving all temp files to " + temp_folder + "\n"
 logger.info(message)
-command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt*   " + "'" +  temp_folder + "'"
+command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt*   " + '"' +  temp_folder + '"'
 logger.info("Running " + command.encode('utf-8'))
 os.system(command.encode('utf-8'))
 
