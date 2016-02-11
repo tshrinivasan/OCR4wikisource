@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.44"
+version = "1.45"
 
 
 config = ConfigParser.ConfigParser()

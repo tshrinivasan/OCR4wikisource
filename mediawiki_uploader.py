@@ -14,7 +14,7 @@ import logging
 import urllib2
 
 
-version = "1.44"
+version = "1.45"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -141,9 +141,22 @@ else:
 
 
 
-                        
 
 
+def check_for_bot(username):
+            user = wikitools.User(wiki,username)
+            if 'bot' in user.groups:
+                        return "True"
+
+
+
+logging.info("Checking for bot access rights")
+bot_flag = check_for_bot(wiki_username)
+
+if bot_flag:
+            logging.info("The user " + wiki_username + " has bot access.")
+else:
+            logging.info("The user " + wiki_username + " does not have bot access")
 
 
 
@@ -207,7 +220,12 @@ for text_file in sorted(files):
 	logging.info(message)
 
         page = wikitools.Page(wiki,"Page:"+ pagename, followRedir=True)
-        page.edit(text=content,summary=edit_summary)
+
+        if bot_flag:
+                    page.edit(text=content,summary=edit_summary,bot="True")
+        else:                    
+                    page.edit(text=content,summary=edit_summary)
+        
         message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
 	logging.info(message)
         time.sleep(5)
