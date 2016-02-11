@@ -220,10 +220,10 @@ for text_file in sorted(files):
 
         page = wikitools.Page(wiki,"Page:"+ pagename, followRedir=True)
 
-#        if bot_flag:
-#                    page.edit(text=content,summary=edit_summary,bot="True")
-#        else:                    
-#                    page.edit(text=content,summary=edit_summary)
+        if bot_flag:
+                    page.edit(text=content,summary=edit_summary,bot="True")
+        else:                    
+                    page.edit(text=content,summary=edit_summary)
         
         message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
 	logging.info(message)

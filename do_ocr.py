@@ -459,6 +459,16 @@ single_file.close()
 logger.info("Merged all OCRed files to  all_text_for_" + original_filename + ".txt")
 
 
+if not os.path.isdir("text-for-" + original_filename):
+            os.mkdir("text-for-" + original_filename)
+
+command = "cp *.txt text-for-" + original_filename
+logger.info("Making a copy of all text files to text-for-" + original_filename)
+logger.info("Running " + command.encode('utf-8'))
+os.system(command.encode('utf-8'))
+
+
+
 
 if keep_temp_folder_in_google_drive == "no":
         message =  "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
