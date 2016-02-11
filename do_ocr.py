@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.43"
+version = "1.44"
 
 
 config = ConfigParser.ConfigParser()
@@ -454,7 +454,9 @@ if not pdf_count == result_text_count:
             sys.exit()
 
 if  pdf_count == result_text_count:
-            logger.info("\n\nThe PDF files and result text files are equval. Now run the mediawiki_uploader.py script\n\n")
+            logger.info("\n\nThe PDF files and result text files are equval. Now running the mediawiki_uploader.py script\n\n")
+            command = "python mediawiki_uploader.py"
+            os.system(command)
             
 
                                         
