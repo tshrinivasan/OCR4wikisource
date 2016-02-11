@@ -1,53 +1,15 @@
 INSTALL
 =======
 
-You need a GNU/Linux system to run this program.
-
-In Ubuntu, run the following commands.
-
+Just run the below command
 
 ```
-sudo apt-get install djvulibre-bin  libdjvulibre21   libtiff-tools mupdf mupdf-tools pdftk poppler-utils 
-
-sudo pip install --upgrade google-api-python-client
-
-sudo pip install clint requests wikitools poster oauth2client apiclient 
+bash ./setup.sh
 ```
 
-Then, you have to install and setup gdcmdtools, commandline utilities to work with Google drive.
+This will install all the required packages.
 
 
-Installing gdcmdtools
-=====================
-
-Run the below commands to install gdcmdtools
-
-```
-sudo pip uninstall apiclient
-sudo pip uninstall google-api-python-client
-sudo pip install google-api-python-client
-sudo pip install gdcmdtools
-```
-
-
-# Note for Ubuntu 12.04 users
-
-Do the above steps, along with the following.
-
-mutool is the tool used to split the PDF files vertically for two or more column files.
-
-To install it in ubuntu 12.04, run the below commands
-
-
-```
-sudo apt-get install python-software-properties
-
-sudo add-apt-repository ppa:ubuntuhandbook1/apps
-
-sudo apt-get update
-
-sudo apt-get install mupdf-tools
-```
 
 
 # API Setup
