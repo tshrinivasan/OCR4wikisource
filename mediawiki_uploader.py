@@ -14,7 +14,7 @@ import logging
 import urllib2
 
 
-version = "1.45"
+version = "1.46"
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
@@ -101,7 +101,7 @@ filename = os.path.basename(original_url)
 
 filetype = filename.split('.')[-1].lower()
 
-temp_folder = 'temp-'+ timestamp
+temp_folder = 'upload-'+ filename + "-" + timestamp
 
 logger.info("File Name = " + filename)
 logger.info("File Type = " + filetype)
@@ -203,7 +203,6 @@ for text_file in sorted(files):
 
         pageno = int(text_file.split('.')[0].split('_')[-1])
         
-#        pagename = filename + "/"  + str(convert_to_indic(wikisource_language_code, pageno))
                             
 	indic_page_number =  str(convert_to_indic(wikisource_language_code, pageno))   
 	logging.info("Filename = " + filename)
@@ -221,10 +220,10 @@ for text_file in sorted(files):
 
         page = wikitools.Page(wiki,"Page:"+ pagename, followRedir=True)
 
-        if bot_flag:
-                    page.edit(text=content,summary=edit_summary,bot="True")
-        else:                    
-                    page.edit(text=content,summary=edit_summary)
+#        if bot_flag:
+#                    page.edit(text=content,summary=edit_summary,bot="True")
+#        else:                    
+#                    page.edit(text=content,summary=edit_summary)
         
         message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
 	logging.info(message)
@@ -234,9 +233,41 @@ for text_file in sorted(files):
 
         move_file(text_file)
         
-logging.info("\nDone. Uploaded all text files to wiki source")
+logging.info("\nDone. Uploaded all text files to wiki source\n\n\n")
 
                                                         
 
 	
 
+def clean_folders():
+            if not os.path.isdir("./archives"):
+                        os.mkdir("./archives")
+            if not os.path.isdir("./archives/" + filename):
+                        os.mkdir("./archives/" + filename)
+
+           
+            
+            
+            command = "mv  all_text_for* OCR* upload-* " + " ./archives/" + filename
+            os.system(command.encode('utf-8'))
+
+            command = "cp -R log " + " ./archives/" + filename
+            os.system(command.encode('utf-8'))
+
+            command = "rm -rf log"
+            os.system(command.encode('utf-8'))
+                
+            
+            command = "mv " + filename + " ./archives/" + filename
+            os.system(command.encode('utf-8'))
+                                    
+
+
+
+logger.removeHandler(handler)
+handler.flush()
+handler.close()
+
+time.sleep(2)
+
+clean_folders()

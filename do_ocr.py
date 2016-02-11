@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.45"
+version = "1.46"
 
 
 config = ConfigParser.ConfigParser()
@@ -429,6 +429,34 @@ command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt*   " +
 logger.info("Running " + command.encode('utf-8'))
 os.system(command.encode('utf-8'))
 
+
+
+
+original_filename = os.path.basename(original_url)
+
+files = []
+for textfile in glob.glob('text_for_page*.txt'):
+            files.append(textfile)
+            files.sort()
+
+            
+single_file = open("all_text_for_" + original_filename + ".txt" ,"w")
+
+counter = 1
+for filename in files:
+            content = open(filename).read()
+            single_file.write("\n\n")
+            single_file.write("Page " + str(counter))
+            single_file.write("\n\n")
+            single_file.write(content)
+            single_file.write("\n\n")
+            single_file.write("xxxxxxxxxx")
+            counter = counter + 1
+
+single_file.close()
+                                                                
+
+logger.info("Merged all OCRed files to  all_text_for_" + original_filename + ".txt")
 
 
 
