@@ -242,23 +242,23 @@ logging.info("\nDone. Uploaded all text files to wiki source\n\n\n")
 def clean_folders():
             if not os.path.isdir("./archives"):
                         os.mkdir("./archives")
-            if not os.path.isdir("./archives/" + filename):
-                        os.mkdir("./archives/" + filename)
+            if not os.path.isdir("./archives/files-for-" + filename):
+                        os.mkdir("./archives/files-for-" + filename)
 
            
             
             
-            command = "mv  all_text_for* OCR* upload-* " + " ./archives/" + filename
+            command = "mv  all_text_for* OCR* upload-* " + " ./archives/files-for-" + filename
             os.system(command.encode('utf-8'))
 
-            command = "cp -R log " + " ./archives/" + filename
+            command = "cp -R log " + " ./archives/files-for-" + filename
             os.system(command.encode('utf-8'))
 
             command = "rm -rf log"
             os.system(command.encode('utf-8'))
                 
             
-            command = "mv " + filename + " ./archives/" + filename
+            command = "mv " + filename + " ./archives/files-for-" + filename
             os.system(command.encode('utf-8'))
                                     
 
