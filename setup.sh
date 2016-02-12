@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install djvulibre-bin  libdjvulibre21   libtiff-tools mupdf mupdf-tools pdftk poppler-utils
+sudo apt-get install djvulibre-bin  libdjvulibre21   libtiff-tools mupdf mupdf-tools pdftk poppler-utils git
 sudo pip install --upgrade google-api-python-client
 sudo pip install clint requests wikitools poster oauth2client apiclient
 
