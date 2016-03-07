@@ -73,9 +73,6 @@ for line in os_info:
 logging.info("Operating System = " + os_version)
 
 
-
-time.sleep(1)
-
 #Read the config file
 
 url = config.get('settings','file_url')
