@@ -74,7 +74,7 @@ logging.info("Operating System = " + os_version)
 
 
 
-
+time.sleep(1)
 
 #Read the config file
 
@@ -84,6 +84,7 @@ wiki_username = config.get('settings','wiki_username')
 wiki_password = config.get('settings','wiki_password')
 wikisource_language_code = config.get('settings','wikisource_language_code')
 keep_temp_folder_in_google_drive = config.get('settings','keep_temp_folder_in_google_drive')
+delay = config.get('settings','delay')
 #start_page = config.get('settings','start_page')
 #end_page = config.get('settings','end_page')
 
@@ -95,6 +96,7 @@ logger.info("Wiki Username = " + wiki_username)
 logger.info("Wiki Password = " + "Not logging the password")
 logger.info("Wiki Source Language Code = " + wikisource_language_code )
 logger.info("Keep Temp folder in  Google Drive = " + keep_temp_folder_in_google_drive)
+logger.info("Delay = " + delay)
 #logger.info("Start Page = " + str(start_page))
 #logger.info("End Page = " + str(end_page))
 
@@ -239,6 +241,10 @@ def move_file(file):
         logger.info(message)
 
 
+#Pause the tool while running many parallel sessions
+
+delay = float(delay)
+time.sleep(delay)
 
 
 # Create a temp folder in google drive to upload the files. You can delete this folder later.
@@ -274,9 +280,6 @@ for filename in glob.glob('page_*.pdf'):
 #    for pageno in range(int(start_page),len(files) +1):
 #        pages.append("page_" + str(pageno).zfill(5) + ".pdf")
         
-
-
-
 
 
 
