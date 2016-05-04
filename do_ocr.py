@@ -19,7 +19,7 @@ version = "1.53"
 
 
 config = ConfigParser.ConfigParser()
-config.read("config.ini")
+config.read( os.path.dirname(os.path.abspath(__file__)) + "/config.ini")
 
 
 logging.basicConfig(level=logging.INFO)
@@ -492,7 +492,7 @@ if not pdf_count == result_text_count:
             sys.exit()
 
 if  pdf_count == result_text_count:
-            logger.info("\n\nThe PDF files and result text files are equval. Now running the mediawiki_uploader.py script\n\n")
+            logger.info("\n\nThe PDF files and result text files are equal. Now running the mediawiki_uploader.py script\n\n")
             command = "python mediawiki_uploader.py"
             os.system(command)
             
