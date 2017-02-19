@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.53"
+version = "1.54"
 
 
 config = ConfigParser.ConfigParser()
@@ -328,7 +328,7 @@ for pdf_file in sorted(files):
 pdf_count = len(glob.glob('page_*.pdf'))
 text_count = len(glob.glob('page_*.txt'))
 
-
+missing_files = open('missing_files.txt','w')
 
 if not pdf_count == text_count:
 
@@ -337,6 +337,7 @@ if not pdf_count == text_count:
             for i in range(1,int(pdf_count)+1):
                         txt_file = "page_" + str(i).zfill(5) + ".txt"
                         if not os.path.isfile(txt_file):
+				    missing_files.write(txt_file +"\n")
                                     logger.info( "Missing " + txt_file)
                                     logger.info( "page_" + str(i).zfill(5) + ".pdf" + " should be reuploaded ")
                                                                          
@@ -345,7 +346,7 @@ if not pdf_count == text_count:
             sys.exit()
 
             
-
+missing_files.close()
             
 
 files = []
