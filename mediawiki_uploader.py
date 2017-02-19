@@ -227,7 +227,7 @@ for text_file in sorted(files):
         
         message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
 	logging.info(message)
-        time.sleep(5)
+        time.sleep(1)
         logging.info("=========")
 
 
@@ -268,6 +268,6 @@ logger.removeHandler(handler)
 handler.flush()
 handler.close()
 
-time.sleep(2)
+time.sleep(1)
 
 clean_folders()
