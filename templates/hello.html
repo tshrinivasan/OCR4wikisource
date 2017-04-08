@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css">
+<div id="header" style="height:15%;width:100%;">
+<div style='float:left'>
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Wikisource-newberg-de.png" width="240" height="320" style="margin-left:15%;margin-top:5%">
+</div>
+<div style='float:left'>
+
+<br>
+<table align="center" width="44" style="margin-left:30%;float:top;">
+<th colspan="2"><h2>OCR for WikiSource</h2></th>
+<form align="center" enctype="multipart/form-data" action="http://127.0.0.1:8000/" method="post">{% csrf_token %}
+  <tr><td>File URL:</td><td><input placeholder="Enter the URL of the page" type="text" name="file_url" /></td></tr>
+  <tr><td>Columns: </td><td><input type="text" name="columns" placeholder="No of Columns in the file" /></td></tr>
+  <tr><td>wiki_username: </td><td><input type="text" name="wiki_username" placeholder="WikiSource Username" /></td></tr>
+  <tr><td>wiki_password: </td><td><input type="password" name="wiki_password" placeholder="WikiSource Password" /></td></tr>
+  <tr><td>wikisource_language_code: </td><td><input type="text" name="wikisource_language_code" placeholder="language code in two letters" /></td></tr>
+  <tr><td>keep_temp_folder_in_google_drive: </td><td><input type="text" name="keep_temp_folder_in_google_drive" value="no" /></td></tr>
+  <tr><td>edit_summary: </td><td><input type="text" name="edit_summary" value="Text from Google OCR" /></td></tr>
+  <tr><td><input type="submit" value="Send" /> </td><td><input type="reset"></td></tr>
+</form>
+</table>
+</div>
+</div>

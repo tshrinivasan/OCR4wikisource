@@ -126,7 +126,7 @@ if os.path.isfile(filename):
             logging.info(filename + " Already Exists. Skipping the download.")
 
 else:
-            print "\n\nDownloading the file " + filename + "\n\n"
+            print("\n\nDownloading the file " + filename + "\n\n")
 
             logger.info("Downloading the file " + filename )
 
@@ -493,9 +493,13 @@ if not pdf_count == result_text_count:
             sys.exit()
 
 if  pdf_count == result_text_count:
-            logger.info("\n\nThe PDF files and result text files are equval. Now running the mediawiki_uploader.py script\n\n")
+            logger.info("\n\nThe PDF files and result text files are equal. Now running the mediawiki_uploader.py script\n\n")
             command = "python mediawiki_uploader.py"
-            os.system(command)
+            ans = raw_input("Make sure to configure your mediawiki username/password for further processes. Continue (Y/N)")
+            if(ans=="Y" or ans=="y"):
+                os.system(command)
+            else:
+                exit()
             
 
                                         
