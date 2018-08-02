@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.55"
+version = "1.56"
 
 
 config = ConfigParser.ConfigParser()
@@ -183,8 +183,8 @@ if filetype.lower() == "pdf":
 
         message =  "Spliting the PDF into single pages. \n"
         logger.info(message)
-#        burst_command = "pdftk currentfile.pdf burst"
-        burst_command = "pdfseparate currentfile.pdf pg-%05d.pdf"
+        burst_command = "pdftk currentfile.pdf burst"
+#        burst_command = "pdfseparate currentfile.pdf pg-%05d.pdf"
         
         os.system(burst_command)
         logger.info("Running " + burst_command) 
