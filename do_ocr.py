@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.54"
+version = "1.55"
 
 
 config = ConfigParser.ConfigParser()
@@ -183,7 +183,9 @@ if filetype.lower() == "pdf":
 
         message =  "Spliting the PDF into single pages. \n"
         logger.info(message)
-        burst_command = "pdftk currentfile.pdf burst"
+#        burst_command = "pdftk currentfile.pdf burst"
+        burst_command = "pdfseparate currentfile.pdf pg-%05d.pdf"
+        
         os.system(burst_command)
         logger.info("Running " + burst_command) 
 
@@ -257,10 +259,19 @@ for line in resultfile:
                 drive_folder_id = line.split(":")[1].strip()
 
                 
+
+logger.info("Converting all the PDF files to JPEG images")
+for pdf in glob.glob('page_*.pdf'):
+    basename = pdf.split(".")[0]
+    pdf_to_jpg = "gs -q -DNOPAUSE -DBATCH -r400 -SDEVICE=jpeg  -sOutputFile=" + basename + ".jpg " + pdf
+    logger.info(pdf_to_jpg)
+    os.system(pdf_to_jpg)
+
  
 files = []
-for filename in glob.glob('page_*.pdf'):
+for filename in glob.glob('page_*.jpg'):
             files.append(filename)
+
 
 
 
@@ -284,37 +295,37 @@ for filename in glob.glob('page_*.pdf'):
 
 upload_counter = 1
 
-for pdf_file in sorted(files):
+for jpg_file in sorted(files):
 
 
-    if not os.path.isfile(pdf_file.split('.')[0] + ".upload"):                        
+    if not os.path.isfile(jpg_file.split('.')[0] + ".upload"):                        
                                                 
 
-            message= "\n\nuploading " + pdf_file + " to google Drive. "     # File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
+            message= "\n\nuploading " + jpg_file + " to google Drive. "     # File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
             logger.info(message)
-            command = "gdput.py -t ocr -f   " +  drive_folder_id + " "  + pdf_file + " | tee " + pdf_file.split('.')[0] + ".log"
+            command = "gdput.py -t ocr -f   " +  drive_folder_id + " "  + jpg_file + " | tee " + jpg_file.split('.')[0] + ".log"
             
             logger.info("Running " + command)
             os.system(command)
 
                                                             
 
-            resultfile = open(pdf_file.split('.')[0] + ".log","r").readlines()
+            resultfile = open(jpg_file.split('.')[0] + ".log","r").readlines()
 
             for line in resultfile:
                         if "id:" in line:
                                     fileid = line.split(":")[1].strip()
-                                    filename = pdf_file.split(".")[0] + ".txt"
+                                    filename = jpg_file.split(".")[0] + ".txt"
                                     get_command = "gdget.py -f txt -s " + filename + " " + fileid
                                     logger.info( "\n\nDownloading the OCRed text \n\n ")
                                     logger.info("Running " + command)
                               #      os.system(get_command)
 
-
+                                    
                                     download_status = os.system(get_command)
 
                                     if download_status == 0:
-                                                create_temp_file = "touch " + pdf_file.split('.')[0] + ".upload"
+                                                create_temp_file = "touch " + jpg_file.split('.')[0] + ".upload"
                                                 logger.info("\n  Creating temp file " + create_temp_file + "\n")
                                                 os.system(create_temp_file)
                         
@@ -325,24 +336,37 @@ for pdf_file in sorted(files):
 
 
 
-pdf_count = len(glob.glob('page_*.pdf'))
+
+#txt_files = []
+for txt_file in glob.glob('page_*.txt'):
+#            files.append(filename)
+            with open(txt_file) as f:
+                        newText=f.read().replace('\n', '\n\n')
+ 
+            with open(txt_file, "w") as f:
+                        f.write(newText)
+
+
+
+
+jpg_count = len(glob.glob('page_*.jpg'))
 text_count = len(glob.glob('page_*.txt'))
 
 missing_files = open('missing_files.txt','w')
 
-if not pdf_count == text_count:
+if not jpg_count == text_count:
 
             logger.info("\n\n=========ERROR===========\n\n")
             
-            for i in range(1,int(pdf_count)+1):
+            for i in range(1,int(jpg_count)+1):
                         txt_file = "page_" + str(i).zfill(5) + ".txt"
                         if not os.path.isfile(txt_file):
-				    missing_files.write(txt_file +"\n")
+                                    missing_files.write(txt_file +"\n")
                                     logger.info( "Missing " + txt_file)
-                                    logger.info( "page_" + str(i).zfill(5) + ".pdf" + " should be reuploaded ")
+                                    logger.info( "page_" + str(i).zfill(5) + ".jpg" + " should be reuploaded ")
                                                                          
 
-            logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the PDF files \n\n")
+            logger.info(" \n\nText files are not equal to JPG files. Some JPG files not OCRed. Run this script again to complete OCR all the JPG files \n\n")
             sys.exit()
 
             
@@ -426,7 +450,7 @@ for i in chunks:
 
 message =  "\nMoving all temp files to " + temp_folder + "\n"
 logger.info(message)
-command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt*   " + '"' +  temp_folder + '"'
+command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* *.jpg  " + '"' +  temp_folder + '"'
 logger.info("Running " + command.encode('utf-8'))
 os.system(command.encode('utf-8'))
 
@@ -487,15 +511,15 @@ logger.info(message)
 
 result_text_count = len(glob.glob('text_for_page_*.txt'))
 
-if not pdf_count == result_text_count:
+if not jpg_count == result_text_count:
             logger.info("\n\n=========ERROR===========\n\n")
-            logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the PDF     files \n\n")
+            logger.info(" \n\nText files are not equal to JPG files. Some JPG files not OCRed. Run this script again to complete OCR all the JPG     files \n\n")
             sys.exit()
 
-if  pdf_count == result_text_count:
-            logger.info("\n\nThe PDF files and result text files are equval. Now running the mediawiki_uploader.py script\n\n")
-            command = "python mediawiki_uploader.py"
-            os.system(command)
+#if  pdf_count == result_text_count:
+#            logger.info("\n\nThe PDF files and result text files are equval. Now running the mediawiki_uploader.py script\n\n")
+#            command = "python mediawiki_uploader.py"
+#            os.system(command)
             
 
                                         
