@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.56"
+version = "1.57"
 
 
 config = ConfigParser.ConfigParser()
@@ -337,14 +337,12 @@ for jpg_file in sorted(files):
 
 
 
-#txt_files = []
-for txt_file in glob.glob('page_*.txt'):
-#            files.append(filename)
-            with open(txt_file) as f:
-                        newText=f.read().replace('\n', '\n\n')
+#for txt_file in glob.glob('page_*.txt'):
+#            with open(txt_file) as f:
+#                        newText=f.read().replace('\n', '\n\n')
  
-            with open(txt_file, "w") as f:
-                        f.write(newText)
+#            with open(txt_file, "w") as f:
+#                        f.write(newText)
 
 
 
