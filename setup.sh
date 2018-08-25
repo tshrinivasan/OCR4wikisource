@@ -13,3 +13,17 @@ sudo apt-get install python-software-properties
 sudo add-apt-repository -y ppa:ubuntuhandbook1/apps
 sudo apt-get update
 sudo apt-get install mupdf-tools
+
+
+
+wget http://mirrors.edge.kernel.org/ubuntu/pool/main/g/gcc-6/libgcj17_6.4.0-8ubuntu1_amd64.deb
+wget https://launchpadlibrarian.net/277739894/pdftk_2.02-4build1_amd64.deb
+wget http://mirrors.edge.kernel.org/ubuntu/pool/main/g/gcc-defaults/libgcj-common_6.4-3ubuntu1_all.deb
+wget http://mirrors.edge.kernel.org/ubuntu/pool/main/g/gcc-6/libgcj17-dev_6.4.0-8ubuntu1_amd64.deb
+
+sudo apt-get install gcc-6-base
+sudo dpkg -i libgcj-common_6.4-3ubuntu1_all.deb
+sudo dpkg -i libgcj17_6.4.0-8ubuntu1_amd64.deb
+sudo dpkg -i pdftk_2.02-4build1_amd64.deb
+
+rm -f *.deb
