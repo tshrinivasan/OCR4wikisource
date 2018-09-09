@@ -15,7 +15,7 @@ import urllib2
 import os.path
 
 
-version = "1.57"
+version = "1.58"
 
 
 config = ConfigParser.ConfigParser()
@@ -261,11 +261,16 @@ for line in resultfile:
                 
 
 logger.info("Converting all the PDF files to JPEG images")
-for pdf in glob.glob('page_*.pdf'):
+for pdf in sorted(glob.glob('page_*.pdf')):
+    
     basename = pdf.split(".")[0]
-    pdf_to_jpg = "gs -q -DNOPAUSE -DBATCH -r400 -SDEVICE=jpeg  -sOutputFile=" + basename + ".jpg " + pdf
-    logger.info(pdf_to_jpg)
-    os.system(pdf_to_jpg)
+    if not os.path.isfile(basename + ".img"):
+        pdf_to_jpg = "gs -q -DNOPAUSE -DBATCH -r400 -SDEVICE=jpeg  -sOutputFile=" + basename + ".jpg " + pdf
+        logger.info(pdf_to_jpg)
+        os.system(pdf_to_jpg)
+        create_temp_file = "touch " + basename + ".img"
+        logger.info(" Creating temp file " + create_temp_file + "\n")
+        os.system(create_temp_file)
 
  
 files = []
@@ -448,7 +453,7 @@ for i in chunks:
 
 message =  "\nMoving all temp files to " + temp_folder + "\n"
 logger.info(message)
-command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* *.jpg  " + '"' +  temp_folder + '"'
+command = "mv folder*.log currentfile.pdf  doc_data.txt pg*.pdf page* txt* *.jpg *.img " + '"' +  temp_folder + '"'
 logger.info("Running " + command.encode('utf-8'))
 os.system(command.encode('utf-8'))
 
