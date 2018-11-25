@@ -164,7 +164,7 @@ else:
 
 
 def convert_to_indic(language,number):
-        if language in ['bn','or','gu','ml','mr','kn']:
+        if language in ['bn','or','gu','ml','kn']:
                 number_string = ''
                 for num in list(str(number)):
                         number_string = number_string + indic_numbers.get(language,num)
