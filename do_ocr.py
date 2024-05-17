@@ -13,7 +13,7 @@ import urllib
 import logging
 import urllib2
 import os.path
-
+import wikitools
 
 version = "1.58"
 
@@ -112,6 +112,24 @@ filetype = filename.split('.')[-1].lower()
 logger.info("File Name = " + filename)
 logger.info("File Type = " + filetype)
 
+wiki_url = "https://" + wikisource_language_code + ".wikisource.org/w/api.php"
+logger.info("Wiki URL = " + wiki_url)
+
+try:
+	wiki = wikitools.wiki.Wiki(wiki_url)
+except:
+	message =  "Can not connect with wiki. Check the URL"
+	logger.info(message)
+
+page_name = filename + '/1'
+page_url = 'https://' + wikisource_language_code + '.wikisource.org/wiki/' + 'Page:'+ page_name
+page = wikitools.Page(wiki,"Page:"+ page_name, followRedir=True)
+if(page.exists):	
+	logger.info("\n\n=========ERROR===========\n\n")
+	logger.info(page_url + 'File already uploaded')
+	sys.exit()
+
+logger.info(page_url + 'does not exist, Perform OCR')
 
 temp_folder = "OCR-" + filename + '-temp-'+ timestamp
 logger.info("Created Temp folder " + temp_folder)
