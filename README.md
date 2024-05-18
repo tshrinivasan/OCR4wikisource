@@ -1,6 +1,6 @@
 Version
 =======
-1.56
+1.59
 
 Notes
 =====
@@ -39,7 +39,7 @@ do_ocr.py
 Run this as
 
 ```
-python do_ocr.py
+python3 do_ocr.py
 ```
 
 This will do the following things.
@@ -56,12 +56,12 @@ This will do the following things.
 This will give text files as 'text_for_page_00001.txt' etc equvalent to the no of pages in the PDF file.
 
 
-mediawiki_uploader.py
+wikisource_uploader.py
 =====================
 run as
 
 ```
-python mediawiki_uploader.py
+python3 wikisource_uploader.py
 ```
 
 This uploads the text files provided by do_ocr.py to the wikisource details you provided in config.ini

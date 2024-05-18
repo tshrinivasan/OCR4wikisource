@@ -1,0 +1,5 @@
+https://www.mediawiki.org/wiki/API:Client_code
+
+https://github.com/wikimedia/mediawiki-api-demos
+
+https://mwclient.readthedocs.io/en/latest/
