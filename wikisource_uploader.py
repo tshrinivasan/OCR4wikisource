@@ -246,7 +246,7 @@ def clean_folders():
            
             
             
-    command = "mv   OCR* upload-* " + " ./archives/files-for-" + filename
+    command = "mv text-*  OCR* upload-* " + " ./archives/files-for-" + filename
     os.system(command)
 
     command = "cp -R log " + " ./archives/files-for-" + filename
