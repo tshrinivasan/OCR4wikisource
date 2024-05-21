@@ -19,7 +19,7 @@ import traceback
 
 import mwclient
 
-version = "1.59"
+version = "1.60"
 
 config = ConfigParser()
 config.read("config.ini")
@@ -225,7 +225,7 @@ for text_file in sorted(files):
         
     message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
     logging.info(message)
-    time.sleep(5)
+    time.sleep(10)
     logging.info("=========")
 
 

@@ -21,7 +21,7 @@ from oauth2client import file, client, tools
 from apiclient.http import MediaIoBaseDownload, MediaFileUpload
 from pathlib import Path
 
-version = "1.59"
+version = "1.60"
 
 config = ConfigParser()
 config.read("config.ini")
