@@ -18,7 +18,7 @@ This will install all the required packages.
 
  * Enable the following Google APIs in "APIs & auth/APIs"
     * Drive API
-       * Fusion Tables API
+
 
  * Make sure your application has an application name in "APIs & auth/Consent screen"
     * Find "PRODUCT NAME" field. Make sure it's not blank.
@@ -32,34 +32,8 @@ This will install all the required packages.
     1. Copy the code you see in your browser, then back to the terminal, paste the code and hit enter.
     1. Done, you won't be asked for the code again unless the credential expired.
 
-## gdauth
-Use the tool to pass the OAuth2 authentication
-
-### Usage
-<pre>
-usage: gdauth.py [-h] [-r {local,oob}] secret_file
-
-gdauth v0.0.1 - Google Drive OAuth2 authentication tool - gdcmdtools (Google Drive command line tools)
-
-positional arguments:
-  secret_file           the secret file in JSON format, ~/.gdcmdtools.secrets will be overwritten
-
-optional arguments:
-  -h, --help            show this help message and exit
-    -r {local,oob}, --redirect_uri {local,oob}
-                            specify the redirect URI for the oauth2 flow, could be:
-			                            local: means "http://localhost"
-						                            oob: (default) means "urn:ietf:wg:oauth:2.0:oob"
-									    </pre>
-
-### Examples for gdauth
-    % gdauth.py /tmp/client_secrets.json   # Use the /tmp/client_secrets.json as secret file
 
 
+## Execution
 
-That' all.
-
-You can see this demo video in Tamil with English Subtitles to setup the gdcmdtools.
-https://www.youtube.com/watch?v=PH9TnD67oj4&feature=youtu.be
-
-
+Check the README.md for execution instructions.
