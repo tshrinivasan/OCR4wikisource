@@ -351,7 +351,7 @@ for pdf in sorted(glob.glob('page_*.pdf')):
         os.system(create_temp_file)
 
 
-move_command = "mv *.jpg *.pdf *.img" + temp_folder
+move_command = "mv *.jpg *.pdf *.img " + temp_folder
 logger.info("moving files to temp folder")
 logger.info(move_command)
 os.system(move_command)
