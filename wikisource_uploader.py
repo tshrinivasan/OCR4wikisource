@@ -204,7 +204,7 @@ for text_file in sorted(files):
     logging.info("Indic page no = " + indic_page_number)
 
    
-    pagename = filename + "/"  + indic_page_number
+    pagename = "Page:" + filename + "/"  + indic_page_number
     logging.info("Page name = " + pagename)
 
            
@@ -223,9 +223,9 @@ for text_file in sorted(files):
     else:                    
         page.edit(content,edit_summary)
         
-    message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/Page:" + pagename + "\n"
+    message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/" + pagename + "\n"
     logging.info(message)
-    time.sleep(10)
+    time.sleep(30)
     logging.info("=========")
 
 
@@ -250,7 +250,7 @@ def clean_folders():
     os.system(command)
 
     command = "cp -R log " + " ./archives/files-for-" + filename
-    os.system(command))
+    os.system(command)
 
     
     #command = "rm -rf log"
