@@ -19,7 +19,7 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from apiclient.http import MediaIoBaseDownload, MediaFileUpload
-
+from pathlib import Path
 
 version = "1.59"
 
@@ -161,6 +161,7 @@ else:
 
     #Download the file
 
+    '''
     r = requests.get(url, stream=True)
     with open(filename, 'wb') as f:
         total_length = int(r.headers.get('content-length'))
@@ -168,9 +169,31 @@ else:
             if chunk:
                 f.write(chunk)
                 f.flush()
+    '''
 
+    '''
+    filename = Path("input_file.pdf")
+    response = requests.get(url)
+    filename.write_bytes(response.content)    
+    '''
+    '''
+    logger.info(url)
+#    urllib.request.urlretrieve(url, "filename.pdf")
 
+#    response = session.get(url)
+    session = requests.Session()
+    response = session.get(url, stream=True)
+
+    with open(filename, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=1024*1024):
+            if chunk:
+                f.write(chunk)
     logger.info("Download Completed")
+    '''
+
+    download_file_command = "wget " + url
+    logger.info(download_file_command)
+    os.system(download_file_command)
 
 
 
@@ -314,7 +337,7 @@ print(drive_folder_id)
 
 
 
-'''        
+        
 logger.info("Converting all the PDF files to JPEG images")
 for pdf in sorted(glob.glob('page_*.pdf')):
     
@@ -326,16 +349,16 @@ for pdf in sorted(glob.glob('page_*.pdf')):
         create_temp_file = "touch " + basename + ".img"
         logger.info(" Creating temp file " + create_temp_file + "\n")
         os.system(create_temp_file)
-'''
 
-move_command = "mv *.pdf " + temp_folder
+
+move_command = "mv *.jpg *.pdf " + temp_folder
 logger.info("moving files to temp folder")
 logger.info(move_command)
 os.system(move_command)
 
  
 files = []
-for filename in glob.glob(temp_folder + "/" + 'page_*.pdf'):
+for filename in glob.glob(temp_folder + "/" + 'page_*.jpg'):
     files.append(filename)
 
 
@@ -345,9 +368,9 @@ def do_ocr(input_file,temp_folder):
     # Upload the file on Goggle Drive
     mime = 'application/vnd.google-apps.document'
     file_metadata = {'name': input_file, 'mimeType': mime, 'parents': [drive_folder_id] }
-    print(file_metadata)
+    #print(file_metadata)
     media = MediaFileUpload(input_file, mimetype= mime, chunksize=256 * 1024, resumable=True )
-    print(media)
+    #print(media)
     Imgfile = service.files().create(body=file_metadata,media_body=media,fields='id')
 
 
@@ -357,7 +380,7 @@ def do_ocr(input_file,temp_folder):
         time.sleep(1)
         if status:
             print("Uploaded %d%%." % int(status.progress() * 100))
-    print("Upload of {} is complete.".format(input_file))
+    logger.info("Upload of {} is complete.".format(input_file))
 
     basename = "".join(os.path.basename(input_file).split(".")[:-1])
     
@@ -392,19 +415,21 @@ def do_ocr(input_file,temp_folder):
 
 
 
-#Upload the PDF files to google drive and OCR
+#Upload the JPG files to google drive and OCR
 
 upload_counter = 1
 
-for pdf_file in sorted(files):
-    basename = "".join(os.path.basename(pdf_file).split(".")[:-1])
+total_files = len(files)
+
+for jpg_file in sorted(files):
+    basename = "".join(os.path.basename(jpg_file).split(".")[:-1])
     if not os.path.isfile(temp_folder + "/" + basename + ".upload"):                        
-        message= "\n\nuploading " + pdf_file + " to google Drive. "     # File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
+        message= "\n\nuploading " + jpg_file +" " + str(upload_counter) + "/" + str(total_files) +  " to google Drive. "     # File " + str(upload_counter) + " of " + str(len(files)) + " \n\n"
         logger.info(message)
 
 
         try:
-            do_ocr(pdf_file, temp_folder)
+            do_ocr(jpg_file, temp_folder)
         except Exception as e:
             logger.info(e)
             logger.info(traceback.format_exc())
@@ -475,12 +500,12 @@ for pdf_file in sorted(files):
 
 
 
-pdf_count = len(glob.glob(temp_folder + "/" + "page_*.pdf"))
+jpg_count = len(glob.glob(temp_folder + "/" + "page_*.jpg"))
 text_count = len(glob.glob(temp_folder + "/"  + "page_*.txt"))
 
 missing_files = open('missing_files.txt','w')
 
-if not pdf_count == text_count:
+if not jpg_count == text_count:
 
     logger.info("\n\n=========ERROR===========\n\n")
             
@@ -489,10 +514,10 @@ if not pdf_count == text_count:
         if not os.path.isfile(txt_file):
             missing_files.write(txt_file +"\n")
             logger.info( "Missing " + txt_file)
-            logger.info( "page_" + str(i).zfill(5) + ".pdf" + " should be reuploaded ")
+            logger.info( "page_" + str(i).zfill(5) + ".jpg" + " should be reuploaded ")
                                                                          
 
-    logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the Pages. \n\n")
+    logger.info(" \n\nText files are not equal to JPG files. Some PDF files not OCRed. Run this script again to complete OCR all the Pages. \n\n")
     sys.exit()
 
             
@@ -631,7 +656,7 @@ logger.info(message)
 
 result_text_count = len(glob.glob(temp_folder + "/" + 'text_for_page_*.txt'))
 
-if not pdf_count == result_text_count:
+if not jpg_count == result_text_count:
     logger.info("\n\n=========ERROR===========\n\n")
     logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the Pages. \n\n")
     sys.exit()
