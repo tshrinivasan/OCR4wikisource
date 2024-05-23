@@ -21,7 +21,9 @@ import mwclient
 
 version = "1.60"
 
-config = ConfigParser()
+
+#https://stackoverflow.com/questions/14340366/configparser-and-string-with
+config = ConfigParser(interpolation=None)
 config.read("config.ini")
 
 indic_numbers = ConfigParser()
