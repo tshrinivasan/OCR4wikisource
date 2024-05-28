@@ -90,6 +90,7 @@ wiki_username = config.get('settings','wiki_username')
 wiki_password = config.get('settings','wiki_password')
 wikisource_language_code = config.get('settings','wikisource_language_code')
 keep_temp_folder_in_google_drive = config.get('settings','keep_temp_folder_in_google_drive')
+hostname = config.get('settings','hostname')
 #start_page = config.get('settings','start_page')
 #end_page = config.get('settings','end_page')
 
@@ -101,6 +102,7 @@ logger.info("Wiki Username = " + wiki_username)
 logger.info("Wiki Password = " + "Not logging the password")
 logger.info("Wiki Source Language Code = " + wikisource_language_code )
 logger.info("Keep Temp folder in  Google Drive = " + keep_temp_folder_in_google_drive)
+logger.info("Hostname = " + hostname)
 #logger.info("Start Page = " + str(start_page))
 #logger.info("End Page = " + str(end_page))
 
@@ -386,8 +388,8 @@ def do_ocr(input_file,temp_folder):
     basename = "".join(os.path.basename(input_file).split(".")[:-1])
     
 
-    filename = temp_folder + "/" + basename + ".txt"
-    time.sleep(10)
+    filename = temp_folder + "/" + "orig_" + basename + ".txt"
+    time.sleep(20)
 
     # Download the file in txt format from Google Drive
     getTxt = service.files().export_media( fileId = response['id'], mimeType='text/plain')
@@ -400,6 +402,16 @@ def do_ocr(input_file,temp_folder):
         print("Download %d%%." % int(status.progress() * 100))
     
 
+    in_file = open(filename)
+
+    out_file= open(temp_folder + "/"  + basename + ".txt","w")
+    all_lines = in_file.readlines()
+    for line in all_lines:
+        out_file.write(line)
+        out_file.write("\n")
+
+    out_file.close()
+    
 
 #pages = []
 #if not end_page == "END" :
@@ -410,11 +422,6 @@ def do_ocr(input_file,temp_folder):
 #    for pageno in range(int(start_page),len(files) +1):
 #        pages.append("page_" + str(pageno).zfill(5) + ".pdf")
         
-
-
-
-
-
 
 #Upload the JPG files to google drive and OCR
 
@@ -510,7 +517,7 @@ if not jpg_count == text_count:
 
     logger.info("\n\n=========ERROR===========\n\n")
             
-    for i in range(1,int(pdf_count)+1):
+    for i in range(1,int(jpg_count)+1):
         txt_file = "page_" + str(i).zfill(5) + ".txt"
         if not os.path.isfile(txt_file):
             missing_files.write(txt_file +"\n")

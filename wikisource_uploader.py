@@ -37,7 +37,7 @@ wiki_password = config.get('settings','wiki_password')
 is_bot_user = config.get('settings','is_bot_user')
 wikisource_language_code = config.get('settings','wikisource_language_code')
 edit_summary = config.get('settings','edit_summary')
-
+users_page_suffix = config.get('settings','users_page_suffix')
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -54,7 +54,7 @@ if not os.path.isdir("./log"):
 
 
 # create a file handler
-log_file = './log/mediawiki_uploader_' + timestamp + '_log.txt'
+log_file = './log/wikisource_uploader_' + timestamp + '_log.txt'
 
 handler = logging.FileHandler(log_file)
 handler.setLevel(logging.INFO)
@@ -191,10 +191,18 @@ def move_file(file):
 
 files = []
 source_folder = "text-for-"+filename + "/"
+print(source_folder)
 for textfile in glob.glob(source_folder + 'text_for_page*.txt'):
+#for textfile in glob.glob(source_folder + 'page_*.txt'):
     files.append(textfile)
 
 print(files)
+print(len(files))
+
+if len(files) == 0:
+    print("No files available")
+    sys.exit()
+
 
 for text_file in sorted(files):
 
@@ -212,6 +220,9 @@ for text_file in sorted(files):
            
     content = open(text_file,'r').read()
 
+    if "________________" in content:
+        content = content.replace("________________"," ")
+ 
     message =  "\nUploading content for " + text_file
     logging.info(message)
 
@@ -234,6 +245,31 @@ for text_file in sorted(files):
     move_file(text_file)
         
 logging.info("\nDone. Uploaded all text files to wiki source\n\n\n")
+
+#book_name = url.split("/")[-1]
+
+line_to_add = "https://" + wiki_url + "/wiki/Index:" + filename
+
+userpage = "User:" + wiki_username + "/" +users_page_suffix
+
+logging.info("User Page name = " + wiki_username)
+
+page = wiki.pages[userpage]
+
+original_content = page.text()
+        #print(original_content)
+
+new_content = original_content + "\n\n" + line_to_add
+
+if is_bot_user.lower() == 'true':
+    page.edit(new_content,edit_summary,bot="True")
+        #TODO - get bot status from the configfile and use here.
+else:                    
+    page.edit(new_content,edit_summary)
+
+logging.info("updated the book name to users page " + userpage )
+ 
+
 
                                                         
 
