@@ -147,7 +147,7 @@ if(page.exists):
 logger.info(page_url + ' does not exist, Perform OCR')
 
 
-temp_folder = "OCR-" + filename + '-temp-'+ timestamp
+temp_folder = "ocr-" + filename + '-temp-'+ timestamp
 logger.info("Created Temp folder " + temp_folder)
 
 if not os.path.isdir(temp_folder):

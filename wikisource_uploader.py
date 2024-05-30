@@ -203,7 +203,9 @@ if len(files) == 0:
     print("No files available")
     sys.exit()
 
+total_files = len(files)
 
+counter = 1
 for text_file in sorted(files):
 
     pageno = int(text_file.split('_')[-1].split(".")[0])
@@ -236,12 +238,16 @@ for text_file in sorted(files):
     else:                    
         page.edit(content,edit_summary)
         
-    message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/" + pagename + "\n"
+    message = "Uploaded at https://" + wikisource_language_code + ".wikisource.org/wiki/" + pagename + " " + str(counter) + "/" + str(total_files) + "\n"
     logging.info(message)
-    time.sleep(30)
+
+    if is_bot_user.lower() == "true":
+        time.sleep(5)
+    else:
+        time.sleep(30)
     logging.info("=========")
 
-
+    counter = counter + 1
     move_file(text_file)
         
 logging.info("\nDone. Uploaded all text files to wiki source\n\n\n")
@@ -284,7 +290,7 @@ def clean_folders():
            
             
             
-    command = "mv text-*  OCR* upload-* " + " ./archives/files-for-" + filename
+    command = "mv text-*  ocr-* upload-* " + " ./archives/files-for-" + filename
     os.system(command)
 
     command = "cp -R log " + " ./archives/files-for-" + filename
