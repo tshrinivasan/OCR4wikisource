@@ -389,7 +389,7 @@ def do_ocr(input_file,temp_folder):
     
 
     filename = temp_folder + "/" + "orig_" + basename + ".txt"
-    time.sleep(20)
+    time.sleep(25)
 
     # Download the file in txt format from Google Drive
     getTxt = service.files().export_media( fileId = response['id'], mimeType='text/plain')
@@ -401,7 +401,7 @@ def do_ocr(input_file,temp_folder):
         status, done = downloader.next_chunk()
         print("Download %d%%." % int(status.progress() * 100))
     
-
+    time.sleep(10)
     in_file = open(filename)
 
     out_file= open(temp_folder + "/"  + basename + ".txt","w")
@@ -518,7 +518,7 @@ if not jpg_count == text_count:
     logger.info("\n\n=========ERROR===========\n\n")
             
     for i in range(1,int(jpg_count)+1):
-        txt_file = "page_" + str(i).zfill(5) + ".txt"
+        txt_file = temp_folder + "/" +"page_" + str(i).zfill(5) + ".txt"
         if not os.path.isfile(txt_file):
             missing_files.write(txt_file +"\n")
             logger.info( "Missing " + txt_file)
@@ -550,15 +550,32 @@ if int(columns)==1:
             content = filetosplit.read()
                         
             if len(content)>50:
-                with open(temp_folder + "/" + 'txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
-                    towrite.write(content)
+                if "________________" in content:
+                    records = content.split('________________\n\n\n\n')
+                    with open(temp_folder + "/" + 'txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
+                        for record in records[1::2]:
+                            towrite.write(content)
+
+                else:
+                    with open(temp_folder + "/" + 'txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
+                        towrite.write(content)
+                
                 i = i+1
             else:
                 with open(temp_folder + "/"  + 'txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:
                     towrite.write(' ')
                 i = i+1
-                                        
 
+    '''            
+    content = filetosplit.read()
+    if "________________" in content:
+        records = content.split('________________\n\n\n\n')
+        print(records)
+        for record in records[1::2]:
+            with open('text_for_page_00248.txt', 'w') as towrite:
+               towrite.write(record)
+    '''
+                
 elif int(columns)==2:
                                                                                                                                                 
     i = 1
@@ -566,7 +583,7 @@ elif int(columns)==2:
         with open(textfile,'r') as filetosplit:
             content = filetosplit.read()
             if "________________" in content:
-                    records = content.split('________________')
+                    records = content.split('________________\n\n\n\n')
                     print(records)
                     for record in records[1::2]:
                        with open(temp_folder + "/" + 'txt_'+str(i).zfill(5)+'.txt', 'w') as towrite:

@@ -223,7 +223,7 @@ for text_file in sorted(files):
     content = open(text_file,'r').read()
 
     if "________________" in content:
-        content = content.replace("________________"," ")
+        content = content.replace("________________\n\n\n\n","")
  
     message =  "\nUploading content for " + text_file
     logging.info(message)
@@ -244,7 +244,7 @@ for text_file in sorted(files):
     if is_bot_user.lower() == "true":
         time.sleep(5)
     else:
-        time.sleep(30)
+        time.sleep(40)
     logging.info("=========")
 
     counter = counter + 1
@@ -254,7 +254,7 @@ logging.info("\nDone. Uploaded all text files to wiki source\n\n\n")
 
 #book_name = url.split("/")[-1]
 
-line_to_add = "https://" + wiki_url + "/wiki/Index:" + filename
+line_to_add = "# [[Index:" + filename +"]]"
 
 userpage = "User:" + wiki_username + "/" +users_page_suffix
 
@@ -265,7 +265,7 @@ page = wiki.pages[userpage]
 original_content = page.text()
         #print(original_content)
 
-new_content = original_content + "\n\n" + line_to_add
+new_content = original_content + "\n" + line_to_add
 
 if is_bot_user.lower() == 'true':
     page.edit(new_content,edit_summary,bot="True")
@@ -273,7 +273,7 @@ if is_bot_user.lower() == 'true':
 else:                    
     page.edit(new_content,edit_summary)
 
-logging.info("updated the book name to users page " + userpage )
+logging.info("updated the book name to users page https://" + wikisource_language_code + ".wikisource.org/wiki/" +  userpage )
  
 
 
