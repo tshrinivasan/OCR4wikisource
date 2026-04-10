@@ -21,7 +21,7 @@ from oauth2client import file, client, tools
 from apiclient.http import MediaIoBaseDownload, MediaFileUpload
 from pathlib import Path
 
-version = "1.60"
+version = "1.61"
 
 #https://stackoverflow.com/questions/14340366/configparser-and-string-with
 config = ConfigParser(interpolation=None)
@@ -327,7 +327,10 @@ if not creds or creds.invalid:
     #flags=tools.argparser.parse_args(args=[])
     flow = client.flow_from_clientsecrets('client_secret.json', SCOPES)
     creds = tools.run_flow(flow, store, flags)
-service = build('drive', 'v3', http=creds.authorize(Http()))
+http_client = Http()
+if hasattr(http_client, 'redirect_codes'):
+    http_client.redirect_codes = http_client.redirect_codes - {308}
+service = build('drive', 'v3', http=creds.authorize(http_client))
 
 
 file_metadata = {'name': 'ocr_files_ocr4wikisource',
@@ -378,18 +381,27 @@ def do_ocr(input_file,temp_folder):
 
 
     response = None
+    retry_count = 0
     while response is None:
-        status, response = Imgfile.next_chunk()
-        time.sleep(1)
-        if status:
-            print("Uploaded %d%%." % int(status.progress() * 100))
+        try:
+            status, response = Imgfile.next_chunk(num_retries=3)
+            time.sleep(1)
+            if status:
+                print("Uploaded %d%%." % int(status.progress() * 100))
+            retry_count = 0
+        except Exception as e:
+            logger.warning("Error uploading chunk: %s. Retrying...", e)
+            retry_count += 1
+            if retry_count > 5:
+                raise e
+            time.sleep(5)
     logger.info("Upload of {} is complete.".format(input_file))
 
     basename = "".join(os.path.basename(input_file).split(".")[:-1])
     
 
     filename = temp_folder + "/" + "orig_" + basename + ".txt"
-    time.sleep(25)
+    time.sleep(15)
 
     # Download the file in txt format from Google Drive
     getTxt = service.files().export_media( fileId = response['id'], mimeType='text/plain')
@@ -397,11 +409,20 @@ def do_ocr(input_file,temp_folder):
     downloader = MediaIoBaseDownload(fh, getTxt)
 #    downloader.next_chunk()
     done = False
+    retry_count = 0
     while done is False:
-        status, done = downloader.next_chunk()
-        print("Download %d%%." % int(status.progress() * 100))
+        try:
+            status, done = downloader.next_chunk(num_retries=3)
+            print("Download %d%%." % int(status.progress() * 100))
+            retry_count = 0
+        except Exception as e:
+            logger.warning("Error downloading chunk: %s. Retrying...", e)
+            retry_count += 1
+            if retry_count > 5:
+                raise e
+            time.sleep(5)
     
-    time.sleep(10)
+    time.sleep(5)
     in_file = open(filename)
 
     out_file= open(temp_folder + "/"  + basename + ".txt","w")
@@ -436,27 +457,26 @@ for jpg_file in sorted(files):
         logger.info(message)
 
 
-        try:
-            do_ocr(jpg_file, temp_folder)
-        except Exception as e:
-            logger.info(e)
-            logger.info(traceback.format_exc())
-                #telegram_send.send(messages=["ALERT : Error on " + filename + ". Script Stopped at " + hostname +". Rerun again"])
-#                sys.exit()
-#                os.system("python3 pdf2text.py")
+        success = False
+        for do_ocr_attempt in range(5):
+            try:
+                do_ocr(jpg_file, temp_folder)
+                success = True
+                break
+            except Exception as e:
+                logger.info("do_ocr failed attempt %d: %s", do_ocr_attempt + 1, e)
+                logger.info(traceback.format_exc())
+                time.sleep(10)
 
+        if not success:
             error_message = "Got issues on " + filename + " on " + hostname
-                #telegram_send.send(messages=[error_message])
             traceback_text = traceback.format_exc()
             message = "Error on " + __file__ +  "\n" + traceback_text
             logger.info(message)
-            #telegram_send.send(messages=[error_message])
-        
-
-
-        f= open(temp_folder + "/" + basename + ".upload","w+")
-        f.close()
-        logger.info("Creating temp file "  + "\n")
+        else:
+            f= open(temp_folder + "/" + basename + ".upload","w+")
+            f.close()
+            logger.info("Creating temp file "  + "\n")
 
 
         logger.info("\n\n========\n\n")
@@ -506,6 +526,14 @@ for jpg_file in sorted(files):
 #                        f.write(newText)
 
 
+try:
+    if keep_temp_folder_in_google_drive == "no":
+        message =  "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
+        logger.info(message)
+        service.files().delete(fileId=drive_folder_id).execute()
+except:
+    print("Cant delete the OCR temp folder")
+    
 
 
 jpg_count = len(glob.glob(temp_folder + "/" + "page_*.jpg"))
@@ -526,6 +554,15 @@ if not jpg_count == text_count:
                                                                          
 
     logger.info(" \n\nText files are not equal to JPG files. Some PDF files not OCRed. Run this script again to complete OCR all the Pages. \n\n")
+
+    os.system("python3 reupload.py -f " + temp_folder)
+
+    
+    if keep_temp_folder_in_google_drive == "no":
+        message =  "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
+        logger.info(message)
+        service.files().delete(fileId=drive_folder_id).execute()
+
     sys.exit()
 
             
@@ -643,11 +680,11 @@ counter = 1
 for filename in files:
     content = open(filename).read()
     single_file.write("\n\n")
-    single_file.write("Page " + str(counter))
+#    single_file.write("Page " + str(counter))
     single_file.write("\n\n")
     single_file.write(content)
     single_file.write("\n\n")
-    single_file.write("xxxxxxxxxx")
+ #   single_file.write("xxxxxxxxxx")
     counter = counter + 1
 
 single_file.close()
@@ -667,10 +704,6 @@ os.system(command)
 
 
 
-if keep_temp_folder_in_google_drive == "no":
-    message =  "\nDeleting the Temp folder in Google Drive " + temp_folder + "\n"
-    logger.info(message)
-    service.files().delete(fileId=drive_folder_id).execute()
 
 
 message =  "\n\nDone. Check the text files start with text_for_page_ "
@@ -686,9 +719,9 @@ if not jpg_count == result_text_count:
     logger.info(" \n\nText files are not equal to PDF files. Some PDF files not OCRed. Run this script again to complete OCR all the Pages. \n\n")
     sys.exit()
 
-#if  pdf_count == result_text_count:
-#            logger.info("\n\nThe PDF files and result text files are equval. Now running the mediawiki_uploader.py script\n\n")
-#            command = "python mediawiki_uploader.py"
+if  jpg_count == result_text_count:
+            logger.info("\n\nThe PDF files and result text files are equval. Now running the wikisource_uploader.py script\n\n")
+            command = "python3 wikisource_uploader.py"
 #            os.system(command)
             
 
